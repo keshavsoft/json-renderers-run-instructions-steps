@@ -248,9 +248,62 @@
             </p>
         </div>
 
+        <!-- The Canvas Architecture Contract -->
+        <div class="arch-card border-primary border-2 shadow-sm">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="badge bg-danger px-3 py-2 text-uppercase fw-bold">Critical Contract</span>
+                <h3 class="fw-bold text-dark mb-0">4. The Canvas Pattern: Expect <code>base</code>, NEVER <code>baseKey</code></h3>
+            </div>
+            <p class="lead text-secondary fs-6">
+                <code>json-renderers-run-instructions-steps</code> is designed to accept an initialized <code>base</code> canvas object, mutate it sequentially in-place, and return that <code>base</code>. It must <strong>never</strong> accept or expect <code>baseKey</code>.
+            </p>
+
+            <div class="row g-4 mt-1 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 rounded-3 bg-danger-subtle border border-danger">
+                        <div class="d-flex align-items-center gap-2 text-danger fw-bold mb-2">
+                            <i class="bi bi-x-circle-fill"></i> Anti-Pattern: Accepting <code>baseKey</code>
+                        </div>
+                        <p class="small text-danger-emphasis mb-2">
+                            Forces the steps runner to perform catalog resolution, introduces heavy dependencies on <code>declarative-spec</code>, isolates canvas state, and breaks composability with parent orchestrators.
+                        </p>
+                        <div class="code-snippet bg-dark text-danger small p-2 rounded">
+                            <code>// FORBIDDEN BLUNDER<br>runInstructions({ instructions, baseKey, data })</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 rounded-3 bg-success-subtle border border-success">
+                        <div class="d-flex align-items-center gap-2 text-success fw-bold mb-2">
+                            <i class="bi bi-check-circle-fill"></i> Correct Architecture: Expecting <code>base</code>
+                        </div>
+                        <p class="small text-success-emphasis mb-2">
+                            The runner receives the in-memory canvas AST (<code>base</code>), runs instructions against <code>state = { base, data }</code>, and returns the populated <code>base</code> to the pipeline.
+                        </p>
+                        <div class="code-snippet bg-dark text-success small p-2 rounded">
+                            <code>// THE ARCHITECTURAL STANDARD<br>runInstructions({ instructions, base, data })</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="fw-bold text-dark mt-3">Why This Architecture Is Non-Negotiable:</h5>
+            <ol class="small text-secondary ps-3 mb-3">
+                <li class="mb-2">
+                    <strong>Pipelining in <code>json-renderers-run-instructions</code></strong>: The master orchestrator resolves the definition, clones the base template once via <code>const base = structuredClone(spec[definition.baseFromSpec])</code>, passes <code>base</code> into <strong>Task 1 (Steps)</strong> to populate core tables/forms, and then passes the <em>exact same canvas</em> to <strong>Task 2 (Options)</strong> to inject search bars, buttons, and pagination. If <code>steps</code> required <code>baseKey</code>, the shared canvas pipeline would break completely.
+                </li>
+                <li class="mb-2">
+                    <strong>Symmetry of Return Value</strong>: The runner returns <code>base</code>. It receives <code>base</code>, mutates its sub-trees, and returns the modified <code>base</code>. Receiving <code>baseKey</code> while returning <code>base</code> violates interface predictability.
+                </li>
+                <li class="mb-2">
+                    <strong>Zero Catalog Coupling & Pollution</strong>: Expecting <code>base</code> frees the runner from needing <code>declarative-spec</code> as an internal dependency. It also prevents catastrophic in-memory catalog mutation where multiple runs would poison a shared static spec.
+                </li>
+            </ol>
+        </div>
+
         <!-- Ecosystem Diagram -->
         <div class="arch-card">
-            <h3 class="fw-bold text-dark mb-3">4. Ecosystem Dependencies & Integration</h3>
+            <h3 class="fw-bold text-dark mb-3">5. Ecosystem Dependencies & Integration</h3>
             <p class="text-secondary mb-3">
                 Each package in the stack has a single, strictly bounded responsibility:
             </p>

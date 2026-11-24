@@ -268,6 +268,30 @@
                 <code>json-renderers-run-instructions-steps</code> achieves extreme performance by performing **deterministic in-place mutations** into pre-allocated branches of the canvas tree using <code>json-write-path</code>. The execution is synchronous, pure, and produces identical results every run without GC pressure.
             </p>
         </div>
+
+        <div class="story-card border-warning">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase">Architectural Lesson</span>
+                <h3 class="fw-bold text-dark mb-0">5. The Canvas Contract: Why We Mandate <code>base</code> and Never <code>baseKey</code></h3>
+            </div>
+            <p>
+                During the evolution between version 5 and 6, an experiment was conducted to pass <code>baseKey</code> (a string pointing to a catalog key) instead of the actual <code>base</code> specification object. At first glance, it seemed like a convenience — letting the runner look up the template itself.
+            </p>
+            <p class="fw-semibold text-danger">
+                However, this proved to be an architectural blunder that broke the foundational tenets of the system:
+            </p>
+            <ul>
+                <li><strong>Broken Multi-Task Pipeline:</strong> In <code>json-renderers-run-instructions</code>, rendering is a staged pipeline. Stage 1 executes instruction steps; Stage 2 injects dynamic options (search bars, options dropdowns, serial numbers). Both stages MUST share and mutate the same in-flight <code>base</code> canvas. Passing <code>baseKey</code> forced <code>steps</code> to create its own isolated canvas, severing the pipeline.</li>
+                <li><strong>Catalog Bleed & Bloat:</strong> Expecting <code>baseKey</code> forced <code>run-instructions-steps</code> to bundle the entire <code>declarative-spec</code> catalog, bloating distribution files and preventing developers from passing custom AST structures.</li>
+                <li><strong>Poisoning the Spec Catalog:</strong> If the runner mutated <code>spec[baseKey]</code> directly, subsequent renders across the application inherited dirty state from previous executions.</li>
+            </ul>
+            <div class="quote-box">
+                "The step runner is a craftsperson operating on a canvas handed to it. It does not go to the warehouse to pick out the canvas; the orchestrator provides the canvas, the runner paints the structural elements, and hands that exact canvas back."
+            </div>
+            <p class="mb-0">
+                With Version 7, the architecture is locked in: <code>runInstructions</code> receives <code>base</code>, mutates <code>base</code> in place, and returns <code>base</code>. Never pass <code>baseKey</code>.
+            </p>
+        </div>
     </main>
 
     <!-- Footer -->

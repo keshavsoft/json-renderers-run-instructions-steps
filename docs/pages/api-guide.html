@@ -202,6 +202,14 @@
             <p class="small text-muted mb-0">
                 Returns the mutated <code>base</code> specification object containing the complete AST tree with all generated children and attributes.
             </p>
+
+            <div class="alert alert-warning border-warning d-flex align-items-start gap-3 mt-4 mb-0">
+                <i class="bi bi-exclamation-triangle-fill text-warning fs-4 flex-shrink-0"></i>
+                <div class="small">
+                    <strong>Critical Architectural Rule: Never pass <code>baseKey</code></strong><br>
+                    <code>runInstructions</code> operates strictly on an in-memory <code>base</code> canvas object. It does not look up keys from <code>declarative-spec</code>. The orchestrator (e.g. <code>json-renderers-run-instructions</code>) is responsible for cloning the base spec (<code>structuredClone(spec[definition.baseFromSpec])</code>) and passing that reference in.
+                </div>
+            </div>
         </div>
 
         <!-- executeStep -->
