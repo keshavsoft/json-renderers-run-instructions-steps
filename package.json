@@ -1,6 +1,6 @@
 {
   "name": "json-renderers-run-instructions-steps",
-  "version": "1.8.5",
+  "version": "1.10.2",
   "description": "Sequential blueprint instruction step runner for JSON renderers",
   "type": "module",
   "main": "src/index.js",

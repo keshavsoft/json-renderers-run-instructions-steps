@@ -4619,7 +4619,7 @@ var ke = /* @__PURE__ */ new Set([
 }, en = (e, t, n, r) => {
 	let { parent: i, key: a } = $t(e, t, r);
 	return (ne[t.action] || b)(i, a, n), e;
-}, tn = (e, t) => {
+}, tn = (e, t) => !t || e !== void 0 && Zt(e, t, { returnArray: !0 }).length > 0, nn = (e, t) => !t?.jsonPath || tn(e?.[t.fileName], t.jsonPath), rn = (e, t) => {
 	if (!e) return null;
 	let n = t[e.fileName];
 	if (n === void 0) throw Error(`Entry not found in state: ${e.fileName}`);
@@ -4628,7 +4628,7 @@ var ke = /* @__PURE__ */ new Set([
 		return t.length === 0 ? Array.isArray(n) ? n : [] : t.length === 1 ? t[0] : t;
 	}
 	return Array.isArray(e.filePath) && e.filePath.length > 0 ? e.filePath.reduce((e, t) => e ? e[t] : void 0, n) : n;
-}, nn = (e, t, n, r = !1) => {
+}, an = (e, t, n, r = !1) => {
 	if (t) {
 		if (!t.filePath || t.filePath.length === 0) {
 			let r = e[t.fileName];
@@ -4637,39 +4637,48 @@ var ke = /* @__PURE__ */ new Set([
 			en(e, t, n, r);
 		} catch {}
 	}
-}, rn = {
+}, on = (e) => (t, { data: n }) => e({
+	columns: n?.columns,
+	data: n,
+	columnSpec: r[t.templateKey.columnKey],
+	rowSpec: r[t.templateKey.rowKey]
+}), sn = {
 	single: (e, t) => {
-		let n = r[e.templateKey], i = tn(e.sourcePath, t);
+		let n = r[e.templateKey], i = rn(e.sourcePath, t);
 		return (e.func === "fromCollection" ? g : p)(i, n);
 	},
-	rowOnColumn: (e, { data: t }) => v({
-		columns: t?.columns,
-		data: t,
-		columnSpec: r[e.templateKey.columnKey],
-		rowSpec: r[e.templateKey.rowKey]
-	}),
-	columnOnRow: (e, { data: t }) => te({
-		columns: t?.columns,
-		data: t,
-		columnSpec: r[e.templateKey.columnKey],
-		rowSpec: r[e.templateKey.rowKey]
-	})
-}, an = (e, t, n = !1) => {
-	let r = i[e], a = rn[r.type](r, t);
-	return nn(t, r.destinationPath, a, n), a;
-}, on = {
+	rowOnColumn: on(v),
+	columnOnRow: on(te),
+	noFunc: (e) => {
+		let t = r[e.templateKey];
+		if (t === void 0) throw Error(`Instruction spec not found: ${e.templateKey}`);
+		return structuredClone(t);
+	}
+}, cn = (e, t, n = !1) => {
+	let r = typeof e == "string" ? e : e?.instructionKey, a = i[r];
+	if (!a) throw Error(`Instruction not found: ${r}`);
+	let o = Array.isArray(a) ? a : [a], s;
+	for (let e of o) {
+		if (e.skipIf && tn(t.base, e.skipIf) || !nn(t, e.destinationPath)) continue;
+		let i = e.type ?? "noFunc", a = sn[i];
+		if (!a) throw Error(`Unsupported instruction type for ${r}: ${i}`);
+		s = a(e, t), an(t, e.destinationPath, s, n);
+	}
+	return s;
+}, ln = {
 	name: "json-renderers-run-instructions",
-	version: "1.8.1"
-}, sn = (e) => {
+	version: "1.10.1"
+}, un = (e) => {
 	typeof globalThis < "u" && e && (globalThis.ks ??= {}, globalThis.ks.jsonRenderers ??= {}, globalThis.ks.jsonRenderers.runInstructions ??= {}, globalThis.ks.jsonRenderers.runInstructions.steps = {
-		meta: on,
+		meta: ln,
 		runInstructions: e
 	});
-}, cn = ({ instructions: e = [], base: t, data: n, showLog: r = !1 } = {}) => (e.forEach((e) => {
-	r && console.log(`[runStep] ${e}`), an(e, {
+}, dn = ({ instructions: e = [], base: t, data: n, showLog: r = !1 } = {}) => (e.forEach((e) => {
+	let i = typeof e == "string" ? e : e?.instructionKey;
+	i && (r && console.log(`[runStep] ${i}`), cn(i, {
 		base: t,
 		data: n
-	}, r);
+	}, r));
 }), t);
-sn(cn);
-export { cn as default, an as executeStep };
+un(dn);
+export { dn as default, cn as executeStep };
