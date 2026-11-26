@@ -1,20 +1,27 @@
 import columns from "../common/columns.json" with { type: "json" };
 import data from "../common/data.json" with { type: "json" };
+
+import definitions from "https://keshavsoft.github.io/declarative-definitions/json/v5/definitions.json" with { type: "json" };
+import spec from "https://keshavsoft.github.io/declarative-spec/json/v4/spec.json" with { type: "json" };
+
 import "../../../docs/dist/v8/min.js";
 
 const targetHtmlId = "dom-render-container";
 
 const start = () => {
     try {
-        const localInstructions = window.ks.declarative.definitions.data.table.simple.instructions;
-        const localBaseFromSpec = window.ks.declarative.definitions.data.table.simple.baseFromSpec;
-        const localBase = structuredClone(window.ks.declarative.spec.data[localBaseFromSpec]);
+        // console.log("instructions : ",);
 
+        const localInstructions = definitions?.table?.simpleSortable?.instructions;
+        const localBaseFromSpec = definitions?.table?.simpleSortable?.baseFromSpec;
+
+        const localBase = structuredClone(spec[localBaseFromSpec]);
+        console.log("aaaaaaaaaa : ", localInstructions, localBase);
         const result = window.ks.jsonRenderers.runInstructions.steps.runInstructions({
             instructions: localInstructions,
             base: localBase,
             data: { columns, data },
-            showLog: false
+            showLog: true
         });
         console.log("result : ", result);
 
