@@ -12,7 +12,7 @@ const start = () => {
         const localBase = structuredClone(spec?.tableWithFooter);
 
         const result = window.ks.jsonRenderers.runInstructions.steps.runInstructions({
-            instructions: ["buildColgroup", "buildHeader", "buildBody", "buildFooter"],
+            instructions: ["buildColgroup", "buildHeader", "buildBody", "buildFooter", "set-search", "search-show-label", "search-show-helper", "search-show-input", "set-serial", "serial-show-serial"],
             base: localBase,
             data: { columns, data },
             showLog: true
