@@ -1,4 +1,5 @@
 import multiInstructions from "declarative-instructions-multi";
+import guardMultiSteps from "./guard/index.js";
 import runStep from "../single/runStep.js";
 
 /**
@@ -6,11 +7,9 @@ import runStep from "../single/runStep.js";
  */
 const runMulti = (key, state, showLog = false) => {
     const steps = multiInstructions[key];
-    if (!Array.isArray(steps)) {
-        throw new Error(`Multi instruction not found: ${key}`);
-    }
+    const guardedSteps = guardMultiSteps(key, steps);
 
-    steps.forEach((step) => runStep(step, state, showLog));
+    guardedSteps.forEach((step) => runStep(step, state, showLog));
     return state;
 };
 

@@ -1,4 +1,5 @@
 import singleInstructions from "declarative-instructions-single";
+import guardSingleStep from "./guard/index.js";
 import runStep from "./runStep.js";
 
 /**
@@ -10,7 +11,7 @@ const runSingle = (key, state, showLog = false) => {
         throw new Error(`Single instruction not found: ${key}`);
     }
 
-    return runStep(step, state, showLog);
+    return runStep(guardSingleStep(key, step), state, showLog);
 };
 
 export { runStep };

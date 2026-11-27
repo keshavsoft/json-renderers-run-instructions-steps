@@ -3,7 +3,7 @@ import data from "../common/data.json" with { type: "json" };
 
 import spec from "https://keshavsoft.github.io/declarative-spec/json/v4/spec.json" with { type: "json" };
 
-import "../../../docs/dist/v13/min.js";
+import "../../../docs/dist/v15/min.js";
 
 const targetHtmlId = "dom-render-container";
 
