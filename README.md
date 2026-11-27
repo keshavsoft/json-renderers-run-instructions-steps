@@ -1,121 +1,67 @@
 # json-renderers-run-instructions-steps
 
-> Sequential blueprint instruction step runner for JSON renderers with 3D dimensional orchestration.
+An ordered executor for single and multi instruction descriptors. It applies them to a caller-provided JSON specification tree and returns that same tree.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docs](https://img.shields.io/badge/docs-live-blue)](https://keshavsoft.github.io/json-renderers-run-instructions-steps/)
+## The story
 
----
+The caller supplies an ordered list such as <code>{ type: "single", key: "buildBody" }</code>, a mutable <code>base</code> tree, and input <code>data</code>. The runner creates a state from <code>{ base, data }</code>, resolves each descriptor, and lets the appropriate instruction runner update the tree.
 
-## What It Does
+A single descriptor selects one atomic instruction. A multi descriptor selects a group of atomic steps; the group is checked before any of its steps run, then its steps run in order. The runner returns the same base object after mutation. It does not choose a component definition, clone a spec, or render DOM.
 
-`json-renderers-run-instructions-steps` executes an array of declarative blueprint instruction keys sequentially upon an existing **`base` canvas AST** using the supplied input `data`.
+## The V15 execution story
 
-```javascript
+For each atomic instruction, the current single-step runner follows this sequence:
+
+1. Check its optional <code>skipIf</code> condition.
+2. For <code>func: null</code>, apply the configured template action directly.
+3. Otherwise, read values from <code>sourcePath</code>, build a result using <code>func</code> and <code>templateKey</code>, then write it to <code>destinationPath</code>.
+
+The multi runner validates its group first, then sends every atomic step through that same runner. The detailed module story is in [src/v15/STORY.md](src/v15/STORY.md).
+
+## Quick start
+
+~~~~js
 import runInstructions from "json-renderers-run-instructions-steps";
-import { spec } from "declarative-spec";
+import spec from "declarative-spec";
 
-// 1. Prepare your input data
-const data = {
-  columns: [
-    { columnName: "Id" },
-    { columnName: "Product" },
-    { columnName: "Price" }
+const base = structuredClone(spec.tableWithFooter);
+
+const result = runInstructions({
+  instructions: [
+    { type: "single", key: "buildColgroup" },
+    { type: "single", key: "buildHeader" },
+    { type: "single", key: "buildBody" },
+    { type: "single", key: "buildFooter" }
   ],
-  data: [
-    { Id: 1, Product: "Laptop", Price: 1200 },
-    { Id: 2, Product: "Mouse", Price: 25 }
-  ]
-};
-
-// 2. Clone the base canvas AST
-const base = structuredClone(spec.tableSimple);
-
-// 3. Run instructions directly against the base canvas
-const canvas = runInstructions({
-  instructions: ["buildColgroup", "buildHeader", "buildBody"],
   base,
-  data,
-  showLog: false
+  data: { columns, data }
 });
 
-// Canvas is mutated in-place and returned
-console.log(canvas);
-```
+// result is the same object as base, now populated.
+~~~~
 
----
+## API
 
-## Architectural Contract: Expect `base`, NEVER `baseKey`
+| Parameter | Purpose |
+| --- | --- |
+| <code>instructions</code> | Ordered array of <code>{ type, key }</code> descriptors. |
+| <code>base</code> | Existing JSON specification tree to update in place. |
+| <code>data</code> | Input object queried by the instruction source paths. |
+| <code>showLog</code> | Optional execution logging, defaulting to <code>false</code>. |
 
-`json-renderers-run-instructions-steps` strictly enforces the **Canvas Pattern**:
+The default export returns <code>base</code>. The named <code>executeStep</code> export runs one descriptor.
 
-```
-Input:  { instructions, base, data, showLog? }
-Output: base (mutated in-place and returned)
-```
+## Current sample
 
-### The Rule
+The highest sample directory in this package is [V7 table](samples/v7/table/index.js). It demonstrates the descriptor sequence and final handoff of the assembled JSON tree to <code>json-to-dom</code>.
 
-> **CRITICAL RULE**: `runInstructions` accepts `base` (an object/AST canvas), **NEVER** `baseKey` (a string).
+## Install
 
-### Why `base` and NOT `baseKey`?
-
-1. **Pipeline Stage in `json-renderers-run-instructions`**:
-   This package is **Task 1** inside the master runtime `json-renderers-run-instructions`.
-   ```javascript
-   // json-renderers-run-instructions orchestrates:
-   const base = structuredClone(spec[definition.baseFromSpec]);
-
-   // Task 1: Step Runner operates on the shared canvas
-   runInstructions({ instructions: definition.instructions, base, data });
-
-   // Task 2: Options Runner operates on the SAME canvas
-   runOptions({ options, optionDefs, base, data });
-
-   return base;
-   ```
-   Both tasks operate sequentially on the **same in-memory canvas reference**. If `steps` expected `baseKey`, the orchestrator could not pass its in-flight canvas.
-
-2. **In-Place Mutation & Return**:
-   `executeStep` uses `writeResult` to mount generated nodes directly into destination branches of `state.base`. Returning `base` guarantees symmetry: you hand in a canvas, the runner populates it, and hands it back.
-
-3. **Catalog Decoupling**:
-   By expecting `base`, this package has **zero coupling** to any specific specification catalog (`declarative-spec` or `spec-repo`). Callers can pass standard specs, custom layouts, or dynamic AST nodes without bundling megabytes of static catalog definitions.
-
-4. **Zero Catalog Pollution**:
-   If the package accepted a `baseKey` string and looked up `spec[baseKey]` internally without a deep clone, every run would mutate the global cached specification, corrupting future renders across the application.
-
----
-
-## 3D Dimensional Orchestration
-
-`json-renderers-run-instructions-steps` is a pure orchestrator. It contains zero transformation loops or ad-hoc algorithms; it delegates directly to the three dimensional transformer functions:
-
-| Dimension          | Package                                 | Function                      | Usage                          |
-| :----------------- | :-------------------------------------- | :---------------------------- | :----------------------------- |
-| **0D (Primitive)** | `json-transformer-funcs-primitive`      | `applyTemplate`               | Cards, Badges, Containers      |
-| **1D (Linear)**    | `json-transformer-funcs-one-dimension`  | `fromCollection`              | Colgroups, Headers, List items |
-| **2D (Matrix)**    | `json-transformer-funcs-two-dimensions` | `rowOnColumn` & `columnOnRow` | Table body, Selects, DataLists |
-
----
-
-## API Reference
-
-### `runInstructions({ instructions, base, data, showLog })`
-
-| Parameter      | Type                            | Required | Description                                                                                      |
-| :------------- | :------------------------------ | :------- | :----------------------------------------------------------------------------------------------- |
-| `instructions` | `Array<{ type, key }>`          | Yes      | Ordered descriptors (`type: "single" \| "multi"`) routed to `single/` or `multi/` workers.      |
-| `base`         | `object`                        | Yes      | Target JSON canvas AST to mutate in-place. **Never a string!**                                   |
-| `data`         | `object`                        | Yes      | Input data object containing `columns` and/or `data` arrays.                                     |
-| `showLog`      | `boolean`                       | No       | Enable step-by-step console logs (default: `false`).                                             |
-
-**Returns:** The mutated `base` canvas object.
-
-See [src/v13/STORY.md](./src/v13/STORY.md) for the v13 modular orchestration story (`index.js` → `executeStep.js` → `single/index.js` &amp; `multi/index.js`).
-
----
+~~~~bash
+npm install json-renderers-run-instructions-steps
+~~~~
 
 ## License
 
-MIT © [KeshavSoft](https://github.com/keshavsoft)
+MIT © KeshavSoft.
+
