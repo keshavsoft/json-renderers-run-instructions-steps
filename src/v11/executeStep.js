@@ -8,13 +8,19 @@ import { rowOnColumn, columnOnRow } from "json-transformer-funcs-two-dimensions"
 import { query } from "jsonpathly";
 
 const startFunc = (stepRef, state, showLog = false) => {
-    const instruction = instructions[stepRef];
+    const key = typeof stepRef === "string" ? stepRef : stepRef?.instructionKey;
+    const instruction = instructions[key];
+    if (!instruction) {
+        throw new Error(`Instruction not found: ${key}`);
+    };
 
     if (Array.isArray(instruction)) {
-        ifArray(instruction, state, showLog = false);
+        ifArray(instruction, state, showLog);
     } else {
-        ifObject(instruction, state, showLog = false);
+        ifObject(instruction, state, showLog);
     };
+
+    return state;
 };
 
 const ifArray = (stepRef, state, showLog = false) => {
@@ -24,6 +30,10 @@ const ifArray = (stepRef, state, showLog = false) => {
 };
 
 const ifObject = (instruction, state, showLog = false) => {
+    if (instruction.skipIf && query(state.base, instruction.skipIf, { returnArray: true }).length > 0) {
+        return state;
+    };
+
     const templateKey = instruction?.templateKey;
 
     const func = instruction.func;
@@ -35,9 +45,9 @@ const ifObject = (instruction, state, showLog = false) => {
         const source = query(state, sourcePath);
         const result = fromCollection(source, template);
 
-        let find = query(state, destinationPath?.jsonPath);
+        let find = query(state, destinationPath?.jsonPath, { returnArray: true });
 
-        find[0].push(...result);
+        find[0]?.push(...result);
     };
 
     if (func === "rowOnColumn") {
@@ -51,13 +61,16 @@ const ifObject = (instruction, state, showLog = false) => {
             columns, data, columnSpec, rowSpec
         });
 
-        let find = query(state, destinationPath?.jsonPath);
+        let find = query(state, destinationPath?.jsonPath, { returnArray: true });
 
-        find[0].push(...result);
+        find[0]?.push(...result);
     };
 
     if (func === null) {
         const template = spec[templateKey];
+        if (template === undefined) {
+            throw new Error(`Instruction spec not found: ${templateKey}`);
+        };
 
         let find = query(state, destinationPath?.jsonPath, { returnArray: true });
 
@@ -73,15 +86,22 @@ const ifObject = (instruction, state, showLog = false) => {
             find[0]?.forEach((row, rowIndex) => {
                 const item = structuredClone(template);
                 item.textContent = rowIndex + 1;
-                row.children.unshift(item);
+                row?.children?.unshift(item);
             });
         };
 
-        console.log("template : ", find, template);
+        if (destinationPath?.action === "pushToRows") {
+            find[0]?.forEach((row) => {
+                const item = structuredClone(template);
+                row?.children?.push(item);
+            });
+        };
+
+        if (showLog) console.log("template : ", find, template);
 
     };
 
-    console.log("state : ", state);
+    if (showLog) console.log("state : ", state);
 
     return state;
 };

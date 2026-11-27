@@ -1364,7 +1364,7 @@ var e = {
 	});
 }, r = e;
 n(e);
-// node_modules/declarative-instructions/src/v4/index.js
+// ../declarative-instructions/src/v4/index.js
 var i = {
 	"serial-show-serial": {
 		narration: "Prepend the serial number cell into each table body row.",
@@ -1641,10 +1641,8 @@ var i = {
 		{
 			narration: "Append the options column width to the table colgroup.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
 			},
 			sourcePath: null,
 			templateKey: "colGroupForOption",
@@ -1653,10 +1651,8 @@ var i = {
 		{
 			narration: "Append the options header cell to the table header row.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "headerForOption",
@@ -1665,10 +1661,8 @@ var i = {
 		{
 			narration: "Append the options button cell into each table body row.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "pushToRows",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
 			},
 			sourcePath: null,
 			templateKey: "optionsButtonCell",
@@ -1677,10 +1671,8 @@ var i = {
 		{
 			narration: "Append the options footer cell to the table footer row.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "tdWithButtonSaveWarning",
@@ -1691,10 +1683,8 @@ var i = {
 		{
 			narration: "Append edit column width.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
 			},
 			sourcePath: null,
 			templateKey: "colGroupForEditOption",
@@ -1703,10 +1693,8 @@ var i = {
 		{
 			narration: "Append edit header.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "headerForEditOption",
@@ -1715,10 +1703,8 @@ var i = {
 		{
 			narration: "Append edit button cells to table rows.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "pushToRows",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
 			},
 			sourcePath: null,
 			templateKey: "optionsEditButtonCell",
@@ -1727,10 +1713,8 @@ var i = {
 		{
 			narration: "Append an empty footer cell for the edit action column.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "emptyCell",
@@ -1741,10 +1725,8 @@ var i = {
 		{
 			narration: "Append delete column width.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
 			},
 			sourcePath: null,
 			templateKey: "colGroupForDeleteOption",
@@ -1753,10 +1735,8 @@ var i = {
 		{
 			narration: "Append delete header.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "headerForDeleteOption",
@@ -1765,10 +1745,8 @@ var i = {
 		{
 			narration: "Append delete button cells to table rows.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "pushToRows",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
 			},
 			sourcePath: null,
 			templateKey: "optionsDeleteButtonCell",
@@ -1777,10 +1755,8 @@ var i = {
 		{
 			narration: "Append an empty footer cell for the delete action column.",
 			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
 				action: "push",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
 			},
 			sourcePath: null,
 			templateKey: "emptyCell",
@@ -4511,17 +4487,19 @@ var Te = /* @__PURE__ */ new Set([
 		return n.returnArray ? [] : void 0;
 	}
 }, Jt = (e, t, n = !1) => {
-	let r = i[e];
-	Array.isArray(r) ? Yt(r, t, n = !1) : Xt(r, t, n = !1);
+	let r = typeof e == "string" ? e : e?.instructionKey, a = i[r];
+	if (!a) throw Error(`Instruction not found: ${r}`);
+	return Array.isArray(a) ? Yt(a, t, n) : Xt(a, t, n), t;
 }, Yt = (e, t, n = !1) => {
 	e.forEach((e) => {
 		Xt(e, t, n);
 	});
 }, Xt = (e, t, n = !1) => {
+	if (e.skipIf && V(t.base, e.skipIf, { returnArray: !0 }).length > 0) return t;
 	let i = e?.templateKey, a = e.func, o = e?.sourcePath, s = e?.destinationPath;
 	if (a === "fromCollection") {
 		let e = r[i], n = g(V(t, o), e);
-		V(t, s?.jsonPath)[0].push(...n);
+		V(t, s?.jsonPath, { returnArray: !0 })[0]?.push(...n);
 	}
 	if (a === "rowOnColumn") {
 		let e = V(t, o?.columns), n = V(t, o?.rows), a = r[i?.columnKey], c = r[i?.rowKey], l = _({
@@ -4530,16 +4508,21 @@ var Te = /* @__PURE__ */ new Set([
 			columnSpec: a,
 			rowSpec: c
 		});
-		V(t, s?.jsonPath)[0].push(...l);
+		V(t, s?.jsonPath, { returnArray: !0 })[0]?.push(...l);
 	}
 	if (a === null) {
-		let e = r[i], n = V(t, s?.jsonPath, { returnArray: !0 });
-		s?.action === "unshift" && n[0]?.unshift(structuredClone(e)), s?.action === "push" && n[0]?.push(structuredClone(e)), s?.action === "unshiftSerialToRows" && n[0]?.forEach((t, n) => {
+		let e = r[i];
+		if (e === void 0) throw Error(`Instruction spec not found: ${i}`);
+		let a = V(t, s?.jsonPath, { returnArray: !0 });
+		s?.action === "unshift" && a[0]?.unshift(structuredClone(e)), s?.action === "push" && a[0]?.push(structuredClone(e)), s?.action === "unshiftSerialToRows" && a[0]?.forEach((t, n) => {
 			let r = structuredClone(e);
-			r.textContent = n + 1, t.children.unshift(r);
-		}), console.log("template : ", n, e);
+			r.textContent = n + 1, t?.children?.unshift(r);
+		}), s?.action === "pushToRows" && a[0]?.forEach((t) => {
+			let n = structuredClone(e);
+			t?.children?.push(n);
+		}), n && console.log("template : ", a, e);
 	}
-	return console.log("state : ", t), t;
+	return n && console.log("state : ", t), t;
 }, Zt = {
 	name: "json-renderers-run-instructions",
 	version: "1.11.1"

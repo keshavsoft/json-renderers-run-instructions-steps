@@ -3,7 +3,7 @@ import data from "../common/data.json" with { type: "json" };
 
 import spec from "https://keshavsoft.github.io/declarative-spec/json/v4/spec.json" with { type: "json" };
 
-import "../../../docs/dist/v11/min.js";
+import "../../../docs/dist/v12/min.js";
 
 const targetHtmlId = "dom-render-container";
 
@@ -12,7 +12,20 @@ const start = () => {
         const localBase = structuredClone(spec?.tableWithFooter);
 
         const result = window.ks.jsonRenderers.runInstructions.steps.runInstructions({
-            instructions: ["buildColgroup", "buildHeader", "buildBody", "buildFooter", "set-search", "search-show-label", "search-show-helper", "search-show-input", "set-serial", "serial-show-serial"],
+            instructions: [
+                { type: "single", key: "buildColgroup" },
+                { type: "single", key: "buildHeader" },
+                { type: "single", key: "buildBody" },
+                { type: "single", key: "buildFooter" },
+                { type: "single", key: "set-search" },
+                { type: "single", key: "search-show-label" },
+                { type: "single", key: "search-show-helper" },
+                { type: "single", key: "search-show-input" },
+                { type: "multi", key: "set-serial" },
+                { type: "single", key: "serial-show-serial" },
+                { type: "multi", key: "options-show-button" },
+                { type: "multi", key: "options-show-edit-button" }
+            ],
             base: localBase,
             data: { columns, data },
             showLog: true
