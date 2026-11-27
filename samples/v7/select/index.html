@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>V4 — Select Step Runner with Declarative-Instructions</title>
+    <title>V13 — Select Step Runner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; font-family: system-ui, -apple-system, sans-serif; }
@@ -19,20 +19,17 @@
 <body class="bg-light">
     <main class="container py-4">
         <div class="hero-banner">
-            <span class="badge bg-success px-3 py-2 mb-2">V4 Step Runner</span>
-            <h1 class="h3 fw-bold mb-2">Select Built using <code>declarative-instructions</code></h1>
-            <p class="text-light-50 small mb-0">Running <code>buildSelectWithOptions</code> from declarative-instructions.</p>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-success px-3 py-2">V13 Step Runner</span>
+                <a href="../index.html" class="btn btn-sm btn-outline-light">&larr; All Samples</a>
+            </div>
+            <h1 class="h3 fw-bold mb-2">Select Dropdowns via <code>columnOnRow</code></h1>
+            <p class="text-light-50 small mb-0">Running <code>{ type: "single", key: "buildSelectWithOptions" }</code> from <code>declarative-instructions-single</code>.</p>
         </div>
         <div id="dom-render-container" class="mt-3"></div>
     </main>
-       <script type="module" src="https://keshavsoft.github.io/declarative-instructions/dist/v2/min.js"></script>
-    <script type="module" src="https://keshavsoft.github.io/declarative-definitions/dist/v2/min.js"></script>
-    <script type="module" src="https://keshavsoft.github.io/declarative-spec/dist/v2/min.js"></script>
-    <script type="module"
-        src="https://keshavsoft.github.io/json-renderers-run-instructions-steps/dist/v4/min.js"></script>
+
     <script type="module" src="https://keshavsoft.github.io/json-to-dom/dist/v42/min.js"></script>
-
-
     <script type="module" src="./index.js"></script>
 </body>
 </html>

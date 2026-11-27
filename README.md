@@ -103,14 +103,16 @@ Output: base (mutated in-place and returned)
 
 ### `runInstructions({ instructions, base, data, showLog })`
 
-| Parameter      | Type       | Required | Description                                                  |
-| :------------- | :--------- | :------- | :----------------------------------------------------------- |
-| `instructions` | `string[]` | Yes      | Array of blueprint keys from `declarative-instructions`.     |
-| `base`         | `object`   | Yes      | Target JSON canvas AST to mutate in-place. **Never a string!**|
-| `data`         | `object`   | Yes      | Input data object containing `columns` and/or `data` arrays. |
-| `showLog`      | `boolean`  | No       | Enable step-by-step console logs (default: `false`).         |
+| Parameter      | Type                            | Required | Description                                                                                      |
+| :------------- | :------------------------------ | :------- | :----------------------------------------------------------------------------------------------- |
+| `instructions` | `Array<{ type, key }>`          | Yes      | Ordered descriptors (`type: "single" \| "multi"`) routed to `single/` or `multi/` workers.      |
+| `base`         | `object`                        | Yes      | Target JSON canvas AST to mutate in-place. **Never a string!**                                   |
+| `data`         | `object`                        | Yes      | Input data object containing `columns` and/or `data` arrays.                                     |
+| `showLog`      | `boolean`                       | No       | Enable step-by-step console logs (default: `false`).                                             |
 
 **Returns:** The mutated `base` canvas object.
+
+See [src/v13/STORY.md](./src/v13/STORY.md) for the v13 modular orchestration story (`index.js` → `executeStep.js` → `single/index.js` &amp; `multi/index.js`).
 
 ---
 

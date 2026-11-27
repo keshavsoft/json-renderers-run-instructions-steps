@@ -1,26 +1,31 @@
 import columns from "../common/columns.json" with { type: "json" };
 import data from "../common/data.json" with { type: "json" };
-import "../../../docs/dist/v7/min.js";
+
+import spec from "https://keshavsoft.github.io/declarative-spec/json/v4/spec.json" with { type: "json" };
+
+import "../../../docs/dist/v13/min.js";
 
 const targetHtmlId = "dom-render-container";
 
 const start = () => {
     try {
-        console.log("window.ks.declarative.definitions.data.select.simple:", window.ks.declarative.definitions.data.select.simple);
-        const localInstructions = window.ks.declarative.definitions.data.select.simple.instructions;
-        const localBaseFromSpec = window.ks.declarative.definitions.data.select.simple.baseFromSpec;
-        const localBase = structuredClone(window.ks.declarative.spec.data[localBaseFromSpec]);
+        const localBase = structuredClone(spec?.selectBase);
 
         const result = window.ks.jsonRenderers.runInstructions.steps.runInstructions({
-            instructions: localInstructions,
+            instructions: [
+                { type: "single", key: "buildSelectWithOptions" }
+            ],
             base: localBase,
             data: { columns, data },
-            showLog: false
+            showLog: true
         });
+        console.log("result : ", result);
 
         window.ks.jsonToDom.appendToDom({
             jsonSpec: result,
-            targetHtmlId, appendPosition: "replace", showLog: false
+            targetHtmlId,
+            appendPosition: "replace",
+            showLog: false
         });
     } catch (err) {
         console.error("V7 Select error:", err);

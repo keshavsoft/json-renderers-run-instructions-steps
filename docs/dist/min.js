@@ -1,4 +1,234 @@
+// node_modules/declarative-instructions-single/src/v4/index.js
 var e = {
+	"serial-show-serial": {
+		narration: "Prepend the serial number cell into each table body row.",
+		destinationPath: {
+			action: "unshiftSerialToRows",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+		},
+		sourcePath: null,
+		templateKey: "buildBodyCell",
+		func: null
+	},
+	"search-show-helper": {
+		narration: "Insert the search helper text into its configured slot.",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchHelper",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
+	},
+	"search-show-input": {
+		narration: "Insert the search input into its configured slot.",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchInput",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
+	},
+	"search-show-label": {
+		narration: "Insert the search label into its configured slot.",
+		destinationPath: {
+			fileName: "base",
+			filePath: ["children"],
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-label-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchLabel",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'table-title']"
+	},
+	"set-search": {
+		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
+		destinationPath: {
+			fileName: "base",
+			filePath: ["children"],
+			action: "unshift",
+			jsonPath: "$.base.children"
+		},
+		sourcePath: null,
+		templateKey: "searchToolbar",
+		func: null,
+		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
+	},
+	buildHeaderClickable: {
+		type: "single",
+		narration: "Build table header",
+		destinationPath: { jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children" },
+		sourcePath: "$.data.columns",
+		templateKey: "tableHeaderClickable",
+		func: "fromCollection"
+	},
+	buildColgroup: {
+		narration: "Build column widths",
+		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup'].children" },
+		sourcePath: "$.data.columns",
+		templateKey: "buildColGroup",
+		func: "fromCollection"
+	},
+	buildHeader: {
+		type: "single",
+		narration: "Build table header",
+		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row'].children" },
+		sourcePath: "$.data.columns",
+		templateKey: "buildHeader",
+		func: "fromCollection"
+	},
+	buildFooter: {
+		type: "single",
+		narration: "Build table footer",
+		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row'].children" },
+		sourcePath: "$.data.columns",
+		templateKey: "buildFooter",
+		func: "fromCollection"
+	},
+	buildBody: {
+		type: "rowOnColumn",
+		narration: "Build table body",
+		sourcePath: {
+			rows: "$.data.data",
+			columns: "$.data.columns"
+		},
+		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-body'].children" },
+		templateKey: {
+			rowKey: "buildBodyTr",
+			columnKey: "buildBodyCell"
+		},
+		func: "rowOnColumn"
+	},
+	buildFormField: {
+		type: "single",
+		narration: "Build form fields from columns",
+		destinationPath: { jsonPath: "$.base..*[?@.attributes['data-role'] == 'form-body'].children" },
+		sourcePath: "$.data.columns",
+		templateKey: "buildFormField",
+		func: "fromCollection"
+	},
+	buildSelectWithOptions: {
+		type: "columnOnRow",
+		narration: "Build selects with options",
+		sourcePath: {
+			columns: "$.data.columns",
+			rows: "$.data.data"
+		},
+		destinationPath: { jsonPath: "$.base.children" },
+		templateKey: {
+			columnKey: "buildSelect",
+			rowKey: "buildOption"
+		},
+		func: "columnOnRow"
+	},
+	buildSelectOptions: {
+		type: "single",
+		narration: "Build select options",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.data",
+		templateKey: "buildOption",
+		func: "fromCollection"
+	},
+	buildOptionsArray: {
+		type: "single",
+		narration: "Build options array",
+		destinationPath: { jsonPath: "$.base" },
+		sourcePath: "$.data.data",
+		templateKey: "buildOption",
+		func: "fromCollection"
+	},
+	buildDataListWithOptions: {
+		type: "columnOnRow",
+		narration: "Build datalists with options",
+		sourcePath: {
+			columns: "$.data.columns",
+			rows: "$.data.data"
+		},
+		destinationPath: { jsonPath: "$.base.children" },
+		templateKey: {
+			columnKey: "buildDataList",
+			rowKey: "buildOption"
+		},
+		func: "columnOnRow"
+	},
+	buildAccordionItems: {
+		type: "single",
+		narration: "Build accordion items from array",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.items",
+		templateKey: "buildAccordionItem",
+		func: "fromCollection"
+	},
+	buildCardBody: {
+		type: "single",
+		narration: "Build card body content",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-body'].children"
+		},
+		sourcePath: "$.data",
+		templateKey: "buildCardBodyTemplate",
+		func: "applyTemplate"
+	},
+	buildCardHeader: {
+		type: "single",
+		narration: "Build card header content",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-header'].children"
+		},
+		sourcePath: "$.data",
+		templateKey: "buildCardHeaderTemplate",
+		func: "applyTemplate"
+	},
+	buildCardFooter: {
+		type: "single",
+		narration: "Build card footer content",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-footer'].children"
+		},
+		sourcePath: "$.data",
+		templateKey: "buildCardFooterTemplate",
+		func: "applyTemplate"
+	},
+	buildListItems: {
+		type: "single",
+		narration: "Build simple list items",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.items",
+		templateKey: "buildListItemTemplate",
+		func: "fromCollection"
+	},
+	buildListGroupItems: {
+		type: "single",
+		narration: "Build list-group items",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.items",
+		templateKey: "buildListGroupItemTemplate",
+		func: "fromCollection"
+	},
+	buildMenuItems: {
+		type: "single",
+		narration: "Build navigation menu items",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.items",
+		templateKey: "buildMenuItemTemplate",
+		func: "fromCollection"
+	},
+	buildMenuCards: {
+		type: "single",
+		narration: "Build menu cards grid",
+		destinationPath: { jsonPath: "$.base.children" },
+		sourcePath: "$.data.items",
+		templateKey: "buildMenuCardItemTemplate",
+		func: "fromCollection"
+	}
+}, t = {
 	buildHeader: {
 		tagName: "th",
 		textContent: "${columnName}",
@@ -1354,587 +1584,79 @@ var e = {
 			}]
 		}]
 	}
-}, t = {
+}, n = {
 	name: "declarative-spec",
 	version: "1.4.1"
-}, n = (e) => {
+}, r = (e) => {
 	typeof globalThis < "u" && (globalThis.ks ??= {}, globalThis.ks.declarative ??= {}, globalThis.ks.declarative.spec = {
-		meta: t,
+		meta: n,
 		data: e
 	});
-}, r = e;
-n(e);
-// node_modules/declarative-instructions-single/src/v3/index.js
-var i = {
-	"serial-show-serial": {
-		narration: "Prepend the serial number cell into each table body row.",
-		destinationPath: {
-			action: "unshiftSerialToRows",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
-		},
-		sourcePath: null,
-		templateKey: "buildBodyCell",
-		func: null
-	},
-	"search-show-helper": {
-		narration: "Insert the search helper text into its configured slot.",
-		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchHelper",
-		func: null,
-		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
-	},
-	"search-show-input": {
-		narration: "Insert the search input into its configured slot.",
-		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchInput",
-		func: null,
-		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
-	},
-	"search-show-label": {
-		narration: "Insert the search label into its configured slot.",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-label-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchLabel",
-		func: null,
-		skipIf: "$..*[?@.attributes.id == 'table-title']"
-	},
-	"set-search": {
-		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "unshift",
-			jsonPath: "$.base.children"
-		},
-		sourcePath: null,
-		templateKey: "searchToolbar",
-		func: null,
-		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
-	},
-	buildHeaderClickable: {
-		type: "single",
-		narration: "Build table header",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.columns"
-		},
-		templateKey: "tableHeaderClickable",
-		func: "fromCollection"
-	},
-	buildColgroup: {
-		narration: "Build column widths",
-		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup'].children" },
-		sourcePath: "$.data.columns",
-		templateKey: "buildColGroup",
-		func: "fromCollection"
-	},
-	buildHeader: {
-		type: "single",
-		narration: "Build table header",
-		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row'].children" },
-		sourcePath: "$.data.columns",
-		templateKey: "buildHeader",
-		func: "fromCollection"
-	},
-	buildFooter: {
-		type: "single",
-		narration: "Build table footer",
-		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row'].children" },
-		sourcePath: "$.data.columns",
-		templateKey: "buildFooter",
-		func: "fromCollection"
-	},
-	buildBody: {
-		type: "rowOnColumn",
-		narration: "Build table body",
-		sourcePath: {
-			rows: "$.data.data",
-			columns: "$.data.columns"
-		},
-		destinationPath: { jsonPath: "$..*[?@.attributes['data-role'] == 'table-body'].children" },
-		templateKey: {
-			rowKey: "buildBodyTr",
-			columnKey: "buildBodyCell"
-		},
-		func: "rowOnColumn"
-	},
-	buildFormField: {
-		type: "single",
-		narration: "Build form fields from columns",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			jsonPath: "$..*[?@.attributes['data-role'] == 'form-body']"
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.columns"
-		},
-		templateKey: "buildFormField",
-		func: "fromCollection"
-	},
-	buildSelectWithOptions: {
-		type: "columnOnRow",
-		narration: "Build selects with options",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		templateKey: {
-			columnKey: "buildSelect",
-			rowKey: "buildOption"
-		}
-	},
-	buildSelectOptions: {
-		type: "single",
-		narration: "Build select options",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.data"
-		},
-		templateKey: "buildOption",
-		func: "fromCollection"
-	},
-	buildOptionsArray: {
-		type: "single",
-		narration: "Build options array",
-		destinationPath: {
-			fileName: "base",
-			filePath: []
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.data"
-		},
-		templateKey: "buildOption",
-		func: "fromCollection"
-	},
-	buildDataListWithOptions: {
-		type: "columnOnRow",
-		narration: "Build datalists with options",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		templateKey: {
-			columnKey: "buildDataList",
-			rowKey: "buildOption"
-		}
-	},
-	buildAccordionItems: {
-		type: "single",
-		narration: "Build accordion items from array",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.items"
-		},
-		templateKey: "buildAccordionItem",
-		func: "fromCollection"
-	},
-	buildCardBody: {
-		type: "single",
-		narration: "Build card body content",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "push",
-			jsonPath: "$..*[?@.attributes['data-role'] == 'card-body']"
-		},
-		sourcePath: { fileName: "data" },
-		templateKey: "buildCardBodyTemplate",
-		func: "applyTemplate"
-	},
-	buildCardHeader: {
-		type: "single",
-		narration: "Build card header content",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "push",
-			jsonPath: "$..*[?@.attributes['data-role'] == 'card-header']"
-		},
-		sourcePath: { fileName: "data" },
-		templateKey: "buildCardHeaderTemplate",
-		func: "applyTemplate"
-	},
-	buildCardFooter: {
-		type: "single",
-		narration: "Build card footer content",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "push",
-			jsonPath: "$..*[?@.attributes['data-role'] == 'card-footer']"
-		},
-		sourcePath: { fileName: "data" },
-		templateKey: "buildCardFooterTemplate",
-		func: "applyTemplate"
-	},
-	buildListItems: {
-		type: "single",
-		narration: "Build simple list items",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.items"
-		},
-		templateKey: "buildListItemTemplate",
-		func: "fromCollection"
-	},
-	buildListGroupItems: {
-		type: "single",
-		narration: "Build list-group items",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.items"
-		},
-		templateKey: "buildListGroupItemTemplate",
-		func: "fromCollection"
-	},
-	buildMenuItems: {
-		type: "single",
-		narration: "Build navigation menu items",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.items"
-		},
-		templateKey: "buildMenuItemTemplate",
-		func: "fromCollection"
-	},
-	buildMenuCards: {
-		type: "single",
-		narration: "Build menu cards grid",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"]
-		},
-		sourcePath: {
-			fileName: "data",
-			jsonPath: "$.items"
-		},
-		templateKey: "buildMenuCardItemTemplate",
-		func: "fromCollection"
-	}
-}, a = {
-	"set-serial": [
-		{
-			narration: "Prepend the serial column width to the table colgroup.",
-			destinationPath: {
-				action: "unshift",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForSerial",
-			func: null
-		},
-		{
-			narration: "Prepend the serial header cell to the table header row.",
-			destinationPath: {
-				action: "unshift",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		},
-		{
-			narration: "Prepend the serial footer cell to the table footer row.",
-			destinationPath: {
-				action: "unshift",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		}
-	],
-	serial: [
-		{
-			narration: "Prepend the serial column width to the table colgroup.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForSerial",
-			func: null
-		},
-		{
-			narration: "Prepend the serial header cell to the table header row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		},
-		{
-			narration: "Prepend the serial number cell into each table body row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshiftSerialToRows",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
-			},
-			sourcePath: null,
-			templateKey: "buildBodyCell",
-			func: null
-		},
-		{
-			narration: "Prepend the serial footer cell to the table footer row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		}
-	],
-	search: [{
-		narration: "Prepend the search row to top of the table.",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "unshift",
-			jsonPath: "$..*[?@.attributes['data-role'] == 'table-parent']"
-		},
-		sourcePath: null,
-		templateKey: "tableSearch",
-		func: null
-	}],
-	"options-show-button": [
-		{
-			narration: "Append the options column width to the table colgroup.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForOption",
-			func: null
-		},
-		{
-			narration: "Append the options header cell to the table header row.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "headerForOption",
-			func: null
-		},
-		{
-			narration: "Append the options button cell into each table body row.",
-			destinationPath: {
-				action: "pushToRows",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
-			},
-			sourcePath: null,
-			templateKey: "optionsButtonCell",
-			func: null
-		},
-		{
-			narration: "Append the options footer cell to the table footer row.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "tdWithButtonSaveWarning",
-			func: null
-		}
-	],
-	"options-show-edit-button": [
-		{
-			narration: "Append edit column width.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForEditOption",
-			func: null
-		},
-		{
-			narration: "Append edit header.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "headerForEditOption",
-			func: null
-		},
-		{
-			narration: "Append edit button cells to table rows.",
-			destinationPath: {
-				action: "pushToRows",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
-			},
-			sourcePath: null,
-			templateKey: "optionsEditButtonCell",
-			func: null
-		},
-		{
-			narration: "Append an empty footer cell for the edit action column.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "emptyCell",
-			func: null
-		}
-	],
-	"options-show-delete-button": [
-		{
-			narration: "Append delete column width.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForDeleteOption",
-			func: null
-		},
-		{
-			narration: "Append delete header.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "headerForDeleteOption",
-			func: null
-		},
-		{
-			narration: "Append delete button cells to table rows.",
-			destinationPath: {
-				action: "pushToRows",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
-			},
-			sourcePath: null,
-			templateKey: "optionsDeleteButtonCell",
-			func: null
-		},
-		{
-			narration: "Append an empty footer cell for the delete action column.",
-			destinationPath: {
-				action: "push",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
-			},
-			sourcePath: null,
-			templateKey: "emptyCell",
-			func: null
-		}
-	]
-}, o = (e) => typeof e == "object" && !!e && !Array.isArray(e), s = (e, t) => {
-	if (!o(e)) return;
+}, i = t;
+r(t);
+// node_modules/json-transformer-funcs-primitive/src/v10/forAttributes/index.js
+var a = (e) => typeof e == "object" && !!e && !Array.isArray(e), o = (e, t) => {
+	if (!a(e)) return;
 	let n = {};
-	for (let [r, i] of Object.entries(e)) n[r] = m(t, i);
+	for (let [r, i] of Object.entries(e)) n[r] = p(t, i);
 	return n;
-}, c = (e, t) => {
+}, s = (e, t) => {
 	let n = structuredClone(e);
-	if (Array.isArray(n)) return n.map((e) => m(t, e));
-}, l = (e, t, n) => {
+	if (Array.isArray(n)) return n.map((e) => p(t, e));
+}, c = (e, t, n) => {
 	if (e === "${agg:count}" && "rowData" in t) {
 		if (Array.isArray(t?.rowData)) return t?.rowData.length;
 	} else if (e === "${rowValue}" && "rowData" in t) return t?.rowData;
 	else return e.replace(/\$\{(\w+)\}/g, (e, n) => t[n] === void 0 ? e : t[n]);
-}, u = (e, t) => l(e, t), d = (e, t, n) => {
+}, l = (e, t) => c(e, t), u = (e, t, n) => {
 	if (n && console.log("inElement : ", e), n && console.log("inTemplate : ", t), t == null) throw TypeError("inTemplate is required");
 	if (typeof t != "object" && typeof t != "string") throw TypeError("inTemplate must be an object or string");
 	if (!e || typeof e != "object" || Array.isArray(e)) throw TypeError("inElement must be an object");
 	return !0;
-}, f = {
+}, d = {
 	name: "json-transformer-funcs-primitive",
 	version: "1.9.1"
-}, p = (e) => {
+}, f = (e) => {
 	typeof globalThis < "u" && e && (globalThis.ks ??= {}, globalThis.ks.transformer ??= {}, globalThis.ks.transformer.funcs ??= {}, globalThis.ks.transformer.funcs.primitive = {
-		meta: f,
+		meta: d,
 		applyTemplate: e
 	});
-}, m = (e, t, n) => {
+}, p = (e, t, n) => {
 	let r = e, i = t;
-	d(r, i, n);
+	u(r, i, n);
 	let a = structuredClone(i);
-	return typeof a == "string" ? l(a, r) : (typeof a != "object" || !a || ("textContent" in a && (a.textContent = u(a?.textContent, r)), "attributes" in a && (a.attributes = s(a?.attributes, r)), "children" in a && (a.children = c(a?.children, r))), a);
+	return typeof a == "string" ? c(a, r) : (typeof a != "object" || !a || ("textContent" in a && (a.textContent = l(a?.textContent, r)), "attributes" in a && (a.attributes = o(a?.attributes, r)), "children" in a && (a.children = s(a?.children, r))), a);
 };
-p(m);
+f(p);
 // node_modules/json-transformer-funcs-one-dimension/src/v9/guard/index.js
-var ee = (e, t) => {
+var m = (e, t) => {
 	if (!Array.isArray(e)) throw TypeError("inSource must be an Array");
 	if (e.length === 0) throw Error("inSource cannot be empty");
 	for (let t = 0; t < e.length; t++) if (!e[t] || typeof e[t] != "object") throw TypeError(`inSource[${t}] must be an object`);
 	if (!t || typeof t != "object" && typeof t != "string") throw TypeError("inTemplate must be an object or string");
 	return !0;
-}, h = {
+}, ee = {
 	name: "json-transformer-funcs-one-dimension",
 	version: "1.9.1"
-}, te = (e, t) => {
+}, h = (e, t) => {
 	if (typeof globalThis < "u") return globalThis.ks ??= {}, globalThis.ks.transformer ??= {}, globalThis.ks.transformer.funcs ??= {}, globalThis.ks.transformer.funcs.oneDimension = {
-		meta: h,
+		meta: ee,
 		individualTemplate: e,
 		template: t
 	}, globalThis.ks.transformer.funcs.oneDimension;
 }, g = (e, t) => {
 	let n = e, r = t;
-	return ee(n, r), n.map((e) => m(e, r));
+	return m(n, r), n.map((e) => p(e, r));
 };
-te((e, t) => {
+h((e, t) => {
 	let n = e;
-	return ee(n, t), n.map((e) => m(e, e[t]));
+	return m(n, t), n.map((e) => p(e, e[t]));
 }, g);
 // node_modules/json-transformer-funcs-two-dimensions/src/v10/index.js
-var _ = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.map((e) => {
-	let i = m(e, t), a = n ? n(e) : [];
+var te = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.map((e) => {
+	let i = p(e, t), a = n ? n(e) : [];
 	return i.children = a.length > 0 ? g(a, r) : [], i;
-}), ne = ({ columns: e = [], data: t = [], columnSpec: n, rowSpec: r } = {}) => _({
+}), _ = ({ columns: e = [], data: t = [], columnSpec: n, rowSpec: r } = {}) => te({
 	outer: Array.isArray(t) ? t : t?.data ?? t?.rows ?? [],
 	outerSpec: r,
 	innerSpec: n,
@@ -1942,7 +1664,18 @@ var _ = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.m
 		...e,
 		rowValue: t[e.columnName]
 	}))
-}), v = Object.defineProperty, y = Object.getOwnPropertySymbols, re = Object.prototype.hasOwnProperty, ie = Object.prototype.propertyIsEnumerable, ae = Math.pow, oe = (e, t, n) => t in e ? v(e, t, {
+}), ne = ({ columns: e = [], data: t = [], rows: n, columnSpec: r, rowSpec: i } = {}) => {
+	let a = n ?? (Array.isArray(t) ? t : t?.data ?? t?.rows ?? []);
+	return te({
+		outer: e,
+		outerSpec: r,
+		innerSpec: i,
+		getInner: (e) => Array.isArray(e.options) && e.options.length > 0 ? e.options.map((e) => typeof e == "object" ? e : { rowValue: e }) : a.map((t) => ({
+			...t,
+			rowValue: t[e.columnName] ?? t.value ?? t
+		}))
+	});
+}, v = Object.defineProperty, y = Object.getOwnPropertySymbols, re = Object.prototype.hasOwnProperty, ie = Object.prototype.propertyIsEnumerable, ae = Math.pow, oe = (e, t, n) => t in e ? v(e, t, {
 	enumerable: !0,
 	configurable: !0,
 	writable: !0,
@@ -2102,7 +1835,7 @@ var ve = class extends SyntaxError {
 };
 function ye(e, t) {
 	t = t === void 0 ? {} : t;
-	let n = {}, r = t.grammarSource, i = { jsonpath: Rr }, a = Rr, o = "length", s = "count", c = "match", l = "search", u = "value", d = "subsetof", f = "anyof", p = "noneof", m = "sizeof", ee = "size", h = "empty", te = "true", g = "false", _ = "null", ne = /^[,\]]/, v = /^[+\-]/, y = /^[*\/]/, re = /^[a-zA-Z_]/, ie = /^[\x80-\uFFFF_]/, ae = /^[a-zA-Z0-9_]/, oe = /^[0-9@$\-]/, se = /^[^\/\\]/, b = /^[gimsuy]/, x = /^[a-zA-Z_\x80-\uD7FF\uE000-\uFFFF]/, S = /^[\uD800-\uDBFF]/, ce = /^[\uDC00-\uDFFF]/, C = /^[0-9]/, w = /^[1-9]/, le = /^[eE]/, ue = /^["\\]/, de = /^['\\]/, T = /^[ -\uD7FF\uE000-\uFFFF]/, E = /^[dD]/, fe = /^[89abAB]/, D = /^[c-fC-F]/, pe = /^[0-9a-fA-F]/, O = /^[ \t\n\r]/, k = J([",", "]"], !1, !1, !1), A = q("length", !1), me = q("count", !1), j = q("match", !1), ye = q("search", !1), be = q("value", !1), xe = J(["+", "-"], !1, !1, !1), M = J(["*", "/"], !1, !1, !1), Se = Nr("string"), Ce = J([
+	let n = {}, r = t.grammarSource, i = { jsonpath: Rr }, a = Rr, o = "length", s = "count", c = "match", l = "search", u = "value", d = "subsetof", f = "anyof", p = "noneof", m = "sizeof", ee = "size", h = "empty", g = "true", te = "false", _ = "null", ne = /^[,\]]/, v = /^[+\-]/, y = /^[*\/]/, re = /^[a-zA-Z_]/, ie = /^[\x80-\uFFFF_]/, ae = /^[a-zA-Z0-9_]/, oe = /^[0-9@$\-]/, se = /^[^\/\\]/, b = /^[gimsuy]/, x = /^[a-zA-Z_\x80-\uD7FF\uE000-\uFFFF]/, S = /^[\uD800-\uDBFF]/, ce = /^[\uDC00-\uDFFF]/, C = /^[0-9]/, w = /^[1-9]/, le = /^[eE]/, ue = /^["\\]/, de = /^['\\]/, T = /^[ -\uD7FF\uE000-\uFFFF]/, E = /^[dD]/, fe = /^[89abAB]/, D = /^[c-fC-F]/, pe = /^[0-9a-fA-F]/, O = /^[ \t\n\r]/, k = J([",", "]"], !1, !1, !1), A = q("length", !1), me = q("count", !1), j = q("match", !1), ye = q("search", !1), be = q("value", !1), xe = J(["+", "-"], !1, !1, !1), M = J(["*", "/"], !1, !1, !1), Se = Nr("string"), Ce = J([
 		["a", "z"],
 		["A", "Z"],
 		"_"
@@ -2116,20 +1849,20 @@ function ye(e, t) {
 		"@",
 		"$",
 		"-"
-	], !1, !1, !1), Oe = q("$", !1), ke = q("@", !1), Ae = q("..", !1), je = q(".", !1), Me = q("*", !1), Ne = q("&&", !1), Pe = q("||", !1), Fe = q("!", !1), Ie = q("==", !1), Le = q("!=", !1), Re = q(">=", !1), ze = q(">", !1), Be = q("<=", !1), Ve = q("<", !1), He = q("=~", !1), N = q("in", !1), Ue = q("nin", !1), We = q("subsetof", !1), Ge = q("anyof", !1), Ke = q("noneof", !1), qe = q("sizeof", !1), Je = q("size", !1), Ye = q("empty", !1), Xe = q("true", !1), Ze = q("false", !1), Qe = q("null", !1), $e = q("{", !1), et = q("}", !1), tt = q("[", !1), nt = q("]", !1), rt = q(":", !1), it = q(",", !1), at = q("(", !1), ot = q(")", !1), st = q("?", !1), ct = Nr("regex"), P = q("/", !1), lt = J(["/", "\\"], !0, !1, !1), F = q("\\", !1), ut = jr(), dt = J([
+	], !1, !1, !1), Oe = q("$", !1), ke = q("@", !1), Ae = q("..", !1), je = q(".", !1), Me = q("*", !1), Ne = q("&&", !1), Pe = q("||", !1), Fe = q("!", !1), Ie = q("==", !1), Le = q("!=", !1), Re = q(">=", !1), ze = q(">", !1), Be = q("<=", !1), Ve = q("<", !1), He = q("=~", !1), N = q("in", !1), Ue = q("nin", !1), We = q("subsetof", !1), Ge = q("anyof", !1), Ke = q("noneof", !1), qe = q("sizeof", !1), Je = q("size", !1), Ye = q("empty", !1), Xe = q("true", !1), Ze = q("false", !1), Qe = q("null", !1), $e = q("{", !1), et = q("}", !1), tt = q("[", !1), nt = q("]", !1), rt = q(":", !1), it = q(",", !1), at = q("(", !1), ot = q(")", !1), st = q("?", !1), ct = Nr("regex"), lt = q("/", !1), ut = J(["/", "\\"], !0, !1, !1), P = q("\\", !1), dt = jr(), ft = J([
 		"g",
 		"i",
 		"m",
 		"s",
 		"u",
 		"y"
-	], !1, !1, !1), ft = J([
+	], !1, !1, !1), pt = J([
 		["a", "z"],
 		["A", "Z"],
 		"_",
 		["", "퟿"],
 		["", "￿"]
-	], !1, !1, !1), pt = J([["\ud800", "\udbff"]], !1, !1, !1), mt = J([["\udc00", "\udfff"]], !1, !1, !1), I = J([["0", "9"]], !1, !1, !1), ht = Nr("number"), gt = q("0", !1), _t = J([["1", "9"]], !1, !1, !1), vt = Nr("integer"), yt = J(["e", "E"], !1, !1, !1), L = q("\"", !1), bt = q("'", !1), xt = J(["\"", "\\"], !1, !1, !1), St = J(["'", "\\"], !1, !1, !1), Ct = J([[" ", "퟿"], ["", "￿"]], !1, !1, !1), wt = q("b", !1), Tt = q("f", !1), Et = q("n", !1), Dt = q("r", !1), Ot = q("t", !1), kt = q("u", !1), At = J(["d", "D"], !1, !1, !1), jt = J([
+	], !1, !1, !1), mt = J([["\ud800", "\udbff"]], !1, !1, !1), F = J([["\udc00", "\udfff"]], !1, !1, !1), I = J([["0", "9"]], !1, !1, !1), ht = Nr("number"), gt = q("0", !1), _t = J([["1", "9"]], !1, !1, !1), vt = Nr("integer"), yt = J(["e", "E"], !1, !1, !1), L = q("\"", !1), bt = q("'", !1), xt = J(["\"", "\\"], !1, !1, !1), St = J(["'", "\\"], !1, !1, !1), Ct = J([[" ", "퟿"], ["", "￿"]], !1, !1, !1), wt = q("b", !1), Tt = q("f", !1), Et = q("n", !1), Dt = q("r", !1), Ot = q("t", !1), kt = q("u", !1), At = J(["d", "D"], !1, !1, !1), jt = J([
 		"8",
 		"9",
 		"a",
@@ -3066,11 +2799,11 @@ function ye(e, t) {
 	}
 	function Gi() {
 		let t, r, i, a;
-		return t = H, e.substr(H, 4) === te ? (r = te, H += 4) : (r = n, K === 0 && Y(Xe)), r === n ? (H = t, t = n) : (i = H, K++, a = Q(), K--, a === n ? i = void 0 : (H = i, i = n), i === n ? (H = t, t = n) : (r = [r, i], t = r)), t;
+		return t = H, e.substr(H, 4) === g ? (r = g, H += 4) : (r = n, K === 0 && Y(Xe)), r === n ? (H = t, t = n) : (i = H, K++, a = Q(), K--, a === n ? i = void 0 : (H = i, i = n), i === n ? (H = t, t = n) : (r = [r, i], t = r)), t;
 	}
 	function Ki() {
 		let t, r, i, a;
-		return t = H, e.substr(H, 5) === g ? (r = g, H += 5) : (r = n, K === 0 && Y(Ze)), r === n ? (H = t, t = n) : (i = H, K++, a = Q(), K--, a === n ? i = void 0 : (H = i, i = n), i === n ? (H = t, t = n) : (r = [r, i], t = r)), t;
+		return t = H, e.substr(H, 5) === te ? (r = te, H += 5) : (r = n, K === 0 && Y(Ze)), r === n ? (H = t, t = n) : (i = H, K++, a = Q(), K--, a === n ? i = void 0 : (H = i, i = n), i === n ? (H = t, t = n) : (r = [r, i], t = r)), t;
 	}
 	function qi() {
 		let t, r, i, a;
@@ -3114,15 +2847,15 @@ function ye(e, t) {
 	}
 	function na() {
 		let t, r, i, a, o, s;
-		if (K++, t = H, e.charCodeAt(H) === 47 ? (r = "/", H++) : (r = n, K === 0 && Y(P)), r !== n) {
-			for (i = [], a = e.charAt(H), se.test(a) ? H++ : (a = n, K === 0 && Y(lt)), a === n && (a = H, e.charCodeAt(H) === 92 ? (o = "\\", H++) : (o = n, K === 0 && Y(F)), o === n ? (H = a, a = n) : (e.length > H ? (s = e.charAt(H), H++) : (s = n, K === 0 && Y(ut)), s === n ? (H = a, a = n) : (o = [o, s], a = o))); a !== n;) i.push(a), a = e.charAt(H), se.test(a) ? H++ : (a = n, K === 0 && Y(lt)), a === n && (a = H, e.charCodeAt(H) === 92 ? (o = "\\", H++) : (o = n, K === 0 && Y(F)), o === n ? (H = a, a = n) : (e.length > H ? (s = e.charAt(H), H++) : (s = n, K === 0 && Y(ut)), s === n ? (H = a, a = n) : (o = [o, s], a = o)));
-			e.charCodeAt(H) === 47 ? (a = "/", H++) : (a = n, K === 0 && Y(P)), a === n ? (H = t, t = n) : (U = t, t = rr(i));
+		if (K++, t = H, e.charCodeAt(H) === 47 ? (r = "/", H++) : (r = n, K === 0 && Y(lt)), r !== n) {
+			for (i = [], a = e.charAt(H), se.test(a) ? H++ : (a = n, K === 0 && Y(ut)), a === n && (a = H, e.charCodeAt(H) === 92 ? (o = "\\", H++) : (o = n, K === 0 && Y(P)), o === n ? (H = a, a = n) : (e.length > H ? (s = e.charAt(H), H++) : (s = n, K === 0 && Y(dt)), s === n ? (H = a, a = n) : (o = [o, s], a = o))); a !== n;) i.push(a), a = e.charAt(H), se.test(a) ? H++ : (a = n, K === 0 && Y(ut)), a === n && (a = H, e.charCodeAt(H) === 92 ? (o = "\\", H++) : (o = n, K === 0 && Y(P)), o === n ? (H = a, a = n) : (e.length > H ? (s = e.charAt(H), H++) : (s = n, K === 0 && Y(dt)), s === n ? (H = a, a = n) : (o = [o, s], a = o)));
+			e.charCodeAt(H) === 47 ? (a = "/", H++) : (a = n, K === 0 && Y(lt)), a === n ? (H = t, t = n) : (U = t, t = rr(i));
 		} else H = t, t = n;
 		return K--, t === n && (r = n, K === 0 && Y(ct)), t;
 	}
 	function ra() {
 		let t, r, i;
-		for (t = H, r = [], i = e.charAt(H), b.test(i) ? H++ : (i = n, K === 0 && Y(dt)); i !== n;) r.push(i), i = e.charAt(H), b.test(i) ? H++ : (i = n, K === 0 && Y(dt));
+		for (t = H, r = [], i = e.charAt(H), b.test(i) ? H++ : (i = n, K === 0 && Y(ft)); i !== n;) r.push(i), i = e.charAt(H), b.test(i) ? H++ : (i = n, K === 0 && Y(ft));
 		return U = t, r = ir(r), t = r, t;
 	}
 	function ia() {
@@ -3135,7 +2868,7 @@ function ye(e, t) {
 	}
 	function aa() {
 		let t, r, i;
-		return t = e.charAt(H), x.test(t) ? H++ : (t = n, K === 0 && Y(ft)), t === n && (t = H, r = e.charAt(H), S.test(r) ? H++ : (r = n, K === 0 && Y(pt)), r === n ? (H = t, t = n) : (i = e.charAt(H), ce.test(i) ? H++ : (i = n, K === 0 && Y(mt)), i === n ? (H = t, t = n) : (r = [r, i], t = r))), t;
+		return t = e.charAt(H), x.test(t) ? H++ : (t = n, K === 0 && Y(pt)), t === n && (t = H, r = e.charAt(H), S.test(r) ? H++ : (r = n, K === 0 && Y(mt)), r === n ? (H = t, t = n) : (i = e.charAt(H), ce.test(i) ? H++ : (i = n, K === 0 && Y(F)), i === n ? (H = t, t = n) : (r = [r, i], t = r))), t;
 	}
 	function oa() {
 		let t;
@@ -3206,19 +2939,19 @@ function ye(e, t) {
 	}
 	function fa() {
 		let t, r, i;
-		return t = H, r = H, K++, i = e.charAt(H), ue.test(i) ? H++ : (i = n, K === 0 && Y(xt)), K--, i === n ? r = void 0 : (H = r, r = n), r === n ? (H = t, t = n) : (i = ma(), i === n ? (H = t, t = n) : (U = t, t = lr(i))), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(F)), r === n ? (H = t, t = n) : (e.charCodeAt(H) === 34 ? (i = "\"", H++) : (i = n, K === 0 && Y(L)), i === n ? (H = t, t = n) : (U = t, t = ur())), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(F)), r === n ? (H = t, t = n) : (i = ha(), i === n ? (H = t, t = n) : (U = t, t = dr(i))))), t;
+		return t = H, r = H, K++, i = e.charAt(H), ue.test(i) ? H++ : (i = n, K === 0 && Y(xt)), K--, i === n ? r = void 0 : (H = r, r = n), r === n ? (H = t, t = n) : (i = ma(), i === n ? (H = t, t = n) : (U = t, t = lr(i))), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(P)), r === n ? (H = t, t = n) : (e.charCodeAt(H) === 34 ? (i = "\"", H++) : (i = n, K === 0 && Y(L)), i === n ? (H = t, t = n) : (U = t, t = ur())), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(P)), r === n ? (H = t, t = n) : (i = ha(), i === n ? (H = t, t = n) : (U = t, t = dr(i))))), t;
 	}
 	function pa() {
 		let t, r, i;
-		return t = H, r = H, K++, i = e.charAt(H), de.test(i) ? H++ : (i = n, K === 0 && Y(St)), K--, i === n ? r = void 0 : (H = r, r = n), r === n ? (H = t, t = n) : (i = ma(), i === n ? (H = t, t = n) : (U = t, t = fr(i))), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(F)), r === n ? (H = t, t = n) : (e.charCodeAt(H) === 39 ? (i = "'", H++) : (i = n, K === 0 && Y(bt)), i === n ? (H = t, t = n) : (U = t, t = pr())), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(F)), r === n ? (H = t, t = n) : (i = ha(), i === n ? (H = t, t = n) : (U = t, t = mr(i))))), t;
+		return t = H, r = H, K++, i = e.charAt(H), de.test(i) ? H++ : (i = n, K === 0 && Y(St)), K--, i === n ? r = void 0 : (H = r, r = n), r === n ? (H = t, t = n) : (i = ma(), i === n ? (H = t, t = n) : (U = t, t = fr(i))), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(P)), r === n ? (H = t, t = n) : (e.charCodeAt(H) === 39 ? (i = "'", H++) : (i = n, K === 0 && Y(bt)), i === n ? (H = t, t = n) : (U = t, t = pr())), t === n && (t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(P)), r === n ? (H = t, t = n) : (i = ha(), i === n ? (H = t, t = n) : (U = t, t = mr(i))))), t;
 	}
 	function ma() {
 		let t, r, i, a;
-		return t = e.charAt(H), T.test(t) ? H++ : (t = n, K === 0 && Y(Ct)), t === n && (t = H, r = H, i = e.charAt(H), S.test(i) ? H++ : (i = n, K === 0 && Y(pt)), i === n ? (H = r, r = n) : (a = e.charAt(H), ce.test(a) ? H++ : (a = n, K === 0 && Y(mt)), a === n ? (H = r, r = n) : (i = [i, a], r = i)), t = r === n ? r : e.substring(t, H)), t;
+		return t = e.charAt(H), T.test(t) ? H++ : (t = n, K === 0 && Y(Ct)), t === n && (t = H, r = H, i = e.charAt(H), S.test(i) ? H++ : (i = n, K === 0 && Y(mt)), i === n ? (H = r, r = n) : (a = e.charAt(H), ce.test(a) ? H++ : (a = n, K === 0 && Y(F)), a === n ? (H = r, r = n) : (i = [i, a], r = i)), t = r === n ? r : e.substring(t, H)), t;
 	}
 	function ha() {
 		let t, r, i, a, o, s, c, l, u, d;
-		return t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(F)), r !== n && (U = t, r = hr()), t = r, t === n && (t = H, e.charCodeAt(H) === 47 ? (r = "/", H++) : (r = n, K === 0 && Y(P)), r !== n && (U = t, r = gr()), t = r, t === n && (t = H, e.charCodeAt(H) === 98 ? (r = "b", H++) : (r = n, K === 0 && Y(wt)), r !== n && (U = t, r = _r()), t = r, t === n && (t = H, e.charCodeAt(H) === 102 ? (r = "f", H++) : (r = n, K === 0 && Y(Tt)), r !== n && (U = t, r = vr()), t = r, t === n && (t = H, e.charCodeAt(H) === 110 ? (r = "n", H++) : (r = n, K === 0 && Y(Et)), r !== n && (U = t, r = yr()), t = r, t === n && (t = H, e.charCodeAt(H) === 114 ? (r = "r", H++) : (r = n, K === 0 && Y(Dt)), r !== n && (U = t, r = br()), t = r, t === n && (t = H, e.charCodeAt(H) === 116 ? (r = "t", H++) : (r = n, K === 0 && Y(Ot)), r !== n && (U = t, r = xr()), t = r, t === n && (t = H, e.charCodeAt(H) === 117 ? (r = "u", H++) : (r = n, K === 0 && Y(kt)), r === n ? (H = t, t = n) : (i = H, a = H, o = e.charAt(H), E.test(o) ? H++ : (o = n, K === 0 && Y(At)), o === n ? (H = a, a = n) : (s = e.charAt(H), fe.test(s) ? H++ : (s = n, K === 0 && Y(jt)), s === n ? (H = a, a = n) : (c = Z(), c === n ? (H = a, a = n) : (l = Z(), l === n ? (H = a, a = n) : (o = [
+		return t = H, e.charCodeAt(H) === 92 ? (r = "\\", H++) : (r = n, K === 0 && Y(P)), r !== n && (U = t, r = hr()), t = r, t === n && (t = H, e.charCodeAt(H) === 47 ? (r = "/", H++) : (r = n, K === 0 && Y(lt)), r !== n && (U = t, r = gr()), t = r, t === n && (t = H, e.charCodeAt(H) === 98 ? (r = "b", H++) : (r = n, K === 0 && Y(wt)), r !== n && (U = t, r = _r()), t = r, t === n && (t = H, e.charCodeAt(H) === 102 ? (r = "f", H++) : (r = n, K === 0 && Y(Tt)), r !== n && (U = t, r = vr()), t = r, t === n && (t = H, e.charCodeAt(H) === 110 ? (r = "n", H++) : (r = n, K === 0 && Y(Et)), r !== n && (U = t, r = yr()), t = r, t === n && (t = H, e.charCodeAt(H) === 114 ? (r = "r", H++) : (r = n, K === 0 && Y(Dt)), r !== n && (U = t, r = br()), t = r, t === n && (t = H, e.charCodeAt(H) === 116 ? (r = "t", H++) : (r = n, K === 0 && Y(Ot)), r !== n && (U = t, r = xr()), t = r, t === n && (t = H, e.charCodeAt(H) === 117 ? (r = "u", H++) : (r = n, K === 0 && Y(kt)), r === n ? (H = t, t = n) : (i = H, a = H, o = e.charAt(H), E.test(o) ? H++ : (o = n, K === 0 && Y(At)), o === n ? (H = a, a = n) : (s = e.charAt(H), fe.test(s) ? H++ : (s = n, K === 0 && Y(jt)), s === n ? (H = a, a = n) : (c = Z(), c === n ? (H = a, a = n) : (l = Z(), l === n ? (H = a, a = n) : (o = [
 			o,
 			s,
 			c,
@@ -3250,7 +2983,7 @@ function ye(e, t) {
 	}
 	function ga() {
 		let t, r;
-		return t = H, K++, e.length > H ? (r = e.charAt(H), H++) : (r = n, K === 0 && Y(ut)), K--, r === n ? t = void 0 : (H = t, t = n), t;
+		return t = H, K++, e.length > H ? (r = e.charAt(H), H++) : (r = n, K === 0 && Y(dt)), K--, r === n ? t = void 0 : (H = t, t = n), t;
 	}
 	function _a(e) {
 		return e.length > 1e3 && kr("Member name too long (maximum 1000 characters)"), e;
@@ -3783,7 +3516,7 @@ var Ee = /* @__PURE__ */ new Set([
 		return null;
 	}
 }, at = (e, t, n, r) => {
-	let { op: i, x: a, y: o, atoms: s, unicode: c, sticky: l } = e, u = n.regexWork ?? n, { clist: d, nlist: f } = r, p = 0, m = 0, { onList: ee, stack: h, atomGen: te, atomHit: g } = r, _ = r.gen, ne = r.step;
+	let { op: i, x: a, y: o, atoms: s, unicode: c, sticky: l } = e, u = n.regexWork ?? n, { clist: d, nlist: f } = r, p = 0, m = 0, { onList: ee, stack: h, atomGen: g, atomHit: te } = r, _ = r.gen, ne = r.step;
 	r.gen = _ + t.length + 2, r.step = ne + t.length + 2;
 	let v = 0, y = !1, re = (e, n, r) => {
 		let s = 0;
@@ -3817,12 +3550,12 @@ var Ee = /* @__PURE__ */ new Set([
 		_++, m = 0, v += e;
 		for (let e = 0; e < p; e++) {
 			let t = d[e], i = a[t];
-			if (te[i] !== r) {
-				te[i] = r;
+			if (g[i] !== r) {
+				g[i] = r;
 				let e = s[i];
-				g[i] = (e.literal === void 0 ? e.re.test(n) : e.literal === n) ? 1 : 0;
+				te[i] = (e.literal === void 0 ? e.re.test(n) : e.literal === n) ? 1 : 0;
 			}
-			if (g[i] === 1 && (m = re(f, m, t + 1), y)) return !0;
+			if (te[i] === 1 && (m = re(f, m, t + 1), y)) return !0;
 		}
 		if (!l && (m = re(f, m, 0), y)) return !0;
 		let i = d;
@@ -3836,22 +3569,22 @@ var Ee = /* @__PURE__ */ new Set([
 	} finally {
 		e.scratch = r;
 	}
-}, st = 256, ct = /* @__PURE__ */ new Map(), P = 0, lt = (e, t, n, r, i = !1) => {
+}, st = 256, ct = /* @__PURE__ */ new Map(), lt = 0, ut = (e, t, n, r, i = !1) => {
 	if (e.length > ze || t.length > 7 || !Ve.test(t)) return null;
 	let a = `${t}/${+!!n}/${+!!i}`, o = ct.get(e)?.get(a);
 	if (o !== void 0) return r(e.length), o;
 	let s = Array.from(e).join(""), c = He(s) > Be ? null : it(n ? `^(?:${s})$` : s, t, i);
-	P >= st && (ct.clear(), P = 0);
+	lt >= st && (ct.clear(), lt = 0);
 	let l = ct.get(s);
-	return l === void 0 && ct.set(s, l = /* @__PURE__ */ new Map()), l.set(a, c), P++, r(s.length + (c === null ? 0 : c.op.length)), c;
-}, F = (e, t, n) => {
+	return l === void 0 && ct.set(s, l = /* @__PURE__ */ new Map()), l.set(a, c), lt++, r(s.length + (c === null ? 0 : c.op.length)), c;
+}, P = (e, t, n) => {
 	var r;
 	return (r = n.regexProgram) == null || r.call(n, e.op.length), ot(e, t, n);
-}, ut = class {
+}, dt = class {
 	constructor(e) {
 		this.nodes = e;
 	}
-}, dt = (e) => {
+}, ft = (e) => {
 	let t = !1;
 	for (let n = 0; n < e.length; n++) {
 		let r = e[n];
@@ -3862,7 +3595,7 @@ var Ee = /* @__PURE__ */ new Set([
 		} else r === "[" && !t ? t = !0 : r === "]" && t && (t = !1);
 	}
 	return !1;
-}, ft = (e) => {
+}, pt = (e) => {
 	for (let t = 0; t < e.length; t++) {
 		let n = e[t];
 		if (n === "\\") {
@@ -3878,24 +3611,24 @@ var Ee = /* @__PURE__ */ new Set([
 			}
 		}
 	}
-	return !dt(e);
-}, pt = 256, mt = /* @__PURE__ */ new Map(), I = (e, t) => {
-	let n = mt.get(e);
-	return n === void 0 && (n = ft(e), mt.size >= pt && mt.clear(), mt.set(Array.from(e).join(""), n)), t(e.length), n;
+	return !ft(e);
+}, mt = 256, F = /* @__PURE__ */ new Map(), I = (e, t) => {
+	let n = F.get(e);
+	return n === void 0 && (n = pt(e), F.size >= mt && F.clear(), F.set(Array.from(e).join(""), n)), t(e.length), n;
 }, ht = /* @__PURE__ */ new Map(), gt = (e, t) => {
 	let n = ht.get(e);
-	return n === void 0 && (n = Le(e), n !== null && (n = Array.from(n).join("")), ht.size >= pt && ht.clear(), ht.set(Array.from(e).join(""), n)), t(e.length), n;
+	return n === void 0 && (n = Le(e), n !== null && (n = Array.from(n).join("")), ht.size >= mt && ht.clear(), ht.set(Array.from(e).join(""), n)), t(e.length), n;
 }, _t = 256, vt = (e, t, n, r, i, a, o = !1) => {
 	let s = a === void 0 ? void 0 : i.regexSites, c = s?.get(a);
 	if (c === void 0) {
 		if (e.length > ze) c = null;
 		else if (o) {
 			let n = gt(e, i);
-			c = n === null ? null : lt(n, t, r, i, !0);
-		} else c = I(e, i) ? lt(e, t, r, i) : null;
+			c = n === null ? null : ut(n, t, r, i, !0);
+		} else c = I(e, i) ? ut(e, t, r, i) : null;
 		s !== void 0 && (s.size >= _t && s.clear(), s.set(a, c));
 	}
-	return c !== null && F(c, n, i);
+	return c !== null && P(c, n, i);
 }, yt = {
 	length: (e, t) => {
 		let n = e[0];
@@ -4355,7 +4088,7 @@ var Ee = /* @__PURE__ */ new Set([
 		}, this.handleFunctionCall = (e, t) => this.memoInvariant(t, () => this.evaluateFunctionCall(e, t)), this.evaluateFunctionCall = (e, t) => {
 			let n = t.name === "count" || t.name === "value", r = t.args.map((t) => {
 				let r = this.handleOperationContent(e, t);
-				return !n || t.type !== "root" && t.type !== "current" ? r?.value : r?.isIndefinite ? new ut(r.value) : new ut(j(r?.value) ? [r?.value] : []);
+				return !n || t.type !== "root" && t.type !== "current" ? r?.value : r?.isIndefinite ? new dt(r.value) : new dt(j(r?.value) ? [r?.value] : []);
 			}), i = yt[t.name], a = t.args[1], o = a?.type === "stringLiteral" || a?.subtype === "string";
 			return i ? i(r, this.tick, o ? t : void 0) : void 0;
 		}, this.handleFilterExpressionContent = (e, t) => {
@@ -4487,62 +4220,386 @@ var Ee = /* @__PURE__ */ new Set([
 		if (!n.hideExceptions) throw e;
 		return n.returnArray ? [] : void 0;
 	}
-}, Yt = (e, t, n = !1) => {
-	if (e.skipIf && V(t.base, e.skipIf, { returnArray: !0 }).length > 0) return t;
-	let { templateKey: i, func: a, sourcePath: o, destinationPath: s } = e;
-	if (a === "fromCollection") {
-		let e = r[i], n = g(V(t, o), e);
-		V(t, s?.jsonPath, { returnArray: !0 })[0]?.push(...n);
-	} else if (a === "rowOnColumn") {
-		let e = ne({
-			columns: V(t, o?.columns),
-			data: V(t, o?.rows),
-			columnSpec: r[i?.columnKey],
-			rowSpec: r[i?.rowKey]
+}, Yt = {
+	unshift: (e, t) => e?.unshift(structuredClone(t)),
+	push: (e, t) => e?.push(structuredClone(t)),
+	unshiftSerialToRows: (e, t) => {
+		e?.forEach((e, n) => {
+			let r = structuredClone(t);
+			r.textContent = n + 1, e?.children?.unshift(r);
 		});
-		V(t, s?.jsonPath, { returnArray: !0 })[0]?.push(...e);
-	} else if (a === null) {
-		let e = r[i];
-		if (e === void 0) throw Error(`Instruction spec not found: ${i}`);
-		let a = V(t, s?.jsonPath, { returnArray: !0 }), o = s?.action;
-		o === "unshift" ? a[0]?.unshift(structuredClone(e)) : o === "push" ? a[0]?.push(structuredClone(e)) : o === "unshiftSerialToRows" ? a[0]?.forEach((t, n) => {
-			let r = structuredClone(e);
-			r.textContent = n + 1, t?.children?.unshift(r);
-		}) : o === "pushToRows" && a[0]?.forEach((t) => {
-			let n = structuredClone(e);
-			t?.children?.push(n);
-		}), n && console.log("template : ", a, e);
-	} else throw Error(`Unsupported instruction func: ${a}`);
-	return n && console.log("state : ", t), t;
-}, Xt = {
-	single: (e, t, n) => {
-		let r = i[e];
-		if (!r) throw Error(`Single instruction not found: ${e}`);
-		Yt(r, t, n);
 	},
-	multi: (e, t, n) => {
-		let r = a[e];
-		if (!Array.isArray(r)) throw Error(`Multi instruction not found: ${e}`);
-		r.forEach((e) => Yt(e, t, n));
+	pushToRows: (e, t) => {
+		e?.forEach((e) => {
+			e?.children?.push(structuredClone(t));
+		});
+	}
+}, Xt = {
+	applyTemplate: (e, t) => {
+		let n = i[e.templateKey], r = p(V(t, e.sourcePath), n);
+		V(t, e.destinationPath?.jsonPath, { returnArray: !0 })[0]?.push(r);
+	},
+	fromCollection: (e, t) => {
+		let n = i[e.templateKey], r = g(V(t, e.sourcePath), n);
+		V(t, e.destinationPath?.jsonPath, { returnArray: !0 })[0]?.push(...r);
+	},
+	rowOnColumn: (e, t) => {
+		let n = _({
+			columns: V(t, e.sourcePath?.columns),
+			data: V(t, e.sourcePath?.rows),
+			columnSpec: i[e.templateKey?.columnKey],
+			rowSpec: i[e.templateKey?.rowKey]
+		});
+		V(t, e.destinationPath?.jsonPath, { returnArray: !0 })[0]?.push(...n);
+	},
+	columnOnRow: (e, t) => {
+		let n = ne({
+			columns: V(t, e.sourcePath?.columns),
+			data: V(t, e.sourcePath?.rows),
+			columnSpec: i[e.templateKey?.columnKey],
+			rowSpec: i[e.templateKey?.rowKey]
+		});
+		V(t, e.destinationPath?.jsonPath, { returnArray: !0 })[0]?.push(...n);
 	}
 }, Zt = (e, t, n = !1) => {
+	if (e.skipIf && V(t.base, e.skipIf, { returnArray: !0 }).length > 0) return t;
+	if (e.func === null) {
+		let r = i[e.templateKey];
+		if (r === void 0) throw Error(`Instruction spec not found: ${e.templateKey}`);
+		let a = V(t, e.destinationPath?.jsonPath, { returnArray: !0 }), o = Yt[e.destinationPath?.action];
+		return o?.(a[0], r), n && console.log("template : ", a, r), n && console.log("state : ", t), t;
+	}
+	let r = Xt[e.func];
+	if (!r) throw Error(`Unsupported instruction func: ${e.func}`);
+	return r(e, t), n && console.log("state : ", t), t;
+}, Qt = (t, n, r = !1) => {
+	let i = e[t];
+	if (!i) throw Error(`Single instruction not found: ${t}`);
+	return Zt(i, n, r);
+}, $t = {
+	"set-serial": [
+		{
+			narration: "Prepend the serial column width to the table colgroup.",
+			destinationPath: {
+				action: "unshift",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForSerial",
+			func: null
+		},
+		{
+			narration: "Prepend the serial header cell to the table header row.",
+			destinationPath: {
+				action: "unshift",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		},
+		{
+			narration: "Prepend the serial footer cell to the table footer row.",
+			destinationPath: {
+				action: "unshift",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		}
+	],
+	serial: [
+		{
+			narration: "Prepend the serial column width to the table colgroup.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForSerial",
+			func: null
+		},
+		{
+			narration: "Prepend the serial header cell to the table header row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		},
+		{
+			narration: "Prepend the serial number cell into each table body row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshiftSerialToRows",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
+			},
+			sourcePath: null,
+			templateKey: "buildBodyCell",
+			func: null
+		},
+		{
+			narration: "Prepend the serial footer cell to the table footer row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		}
+	],
+	search: [{
+		narration: "Prepend the search row to top of the table.",
+		destinationPath: {
+			fileName: "base",
+			filePath: ["children"],
+			action: "unshift",
+			jsonPath: "$..*[?@.attributes['data-role'] == 'table-parent']"
+		},
+		sourcePath: null,
+		templateKey: "tableSearch",
+		func: null
+	}],
+	"options-show-button": [
+		{
+			narration: "Append the options column width to the table colgroup.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForOption",
+			func: null
+		},
+		{
+			narration: "Append the options header cell to the table header row.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "headerForOption",
+			func: null
+		},
+		{
+			narration: "Append the options button cell into each table body row.",
+			destinationPath: {
+				action: "pushToRows",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+			},
+			sourcePath: null,
+			templateKey: "optionsButtonCell",
+			func: null
+		},
+		{
+			narration: "Append the options footer cell to the table footer row.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "tdWithButtonSaveWarning",
+			func: null
+		}
+	],
+	"options-show-edit-button": [
+		{
+			narration: "Append edit column width.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForEditOption",
+			func: null
+		},
+		{
+			narration: "Append edit header.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "headerForEditOption",
+			func: null
+		},
+		{
+			narration: "Append edit button cells to table rows.",
+			destinationPath: {
+				action: "pushToRows",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+			},
+			sourcePath: null,
+			templateKey: "optionsEditButtonCell",
+			func: null
+		},
+		{
+			narration: "Append an empty footer cell for the edit action column.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "emptyCell",
+			func: null
+		}
+	],
+	"options-show-delete-button": [
+		{
+			narration: "Append delete column width.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-colgroup'].children"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForDeleteOption",
+			func: null
+		},
+		{
+			narration: "Append delete header.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-header-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "headerForDeleteOption",
+			func: null
+		},
+		{
+			narration: "Append delete button cells to table rows.",
+			destinationPath: {
+				action: "pushToRows",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+			},
+			sourcePath: null,
+			templateKey: "optionsDeleteButtonCell",
+			func: null
+		},
+		{
+			narration: "Append an empty footer cell for the delete action column.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-footer-row'].children"
+			},
+			sourcePath: null,
+			templateKey: "emptyCell",
+			func: null
+		}
+	],
+	"card-with-footer": [
+		{
+			narration: "Build card header content.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-header'].children"
+			},
+			sourcePath: "$.data",
+			templateKey: "buildCardHeaderTemplate",
+			func: "applyTemplate"
+		},
+		{
+			narration: "Build card body content.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-body'].children"
+			},
+			sourcePath: "$.data",
+			templateKey: "buildCardBodyTemplate",
+			func: "applyTemplate"
+		},
+		{
+			narration: "Build card footer content.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'card-footer'].children"
+			},
+			sourcePath: "$.data",
+			templateKey: "buildCardFooterTemplate",
+			func: "applyTemplate"
+		}
+	],
+	"table-search-toolbar": [
+		{
+			narration: "Insert the search toolbar frame before the table.",
+			destinationPath: {
+				action: "unshift",
+				jsonPath: "$.base.children"
+			},
+			sourcePath: null,
+			templateKey: "searchToolbar",
+			func: null,
+			skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
+		},
+		{
+			narration: "Insert the search label into its configured slot.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-label-slot'].children"
+			},
+			sourcePath: null,
+			templateKey: "searchLabel",
+			func: null,
+			skipIf: "$..*[?@.attributes.id == 'table-title']"
+		},
+		{
+			narration: "Insert the search helper text into its configured slot.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
+			},
+			sourcePath: null,
+			templateKey: "searchHelper",
+			func: null,
+			skipIf: "$..*[?@.attributes.id == 'search-feedback']"
+		},
+		{
+			narration: "Insert the search input into its configured slot.",
+			destinationPath: {
+				action: "push",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
+			},
+			sourcePath: null,
+			templateKey: "searchInput",
+			func: null,
+			skipIf: "$..*[?@.attributes.id == 'tableSearch']"
+		}
+	]
+}, en = {
+	single: Qt,
+	multi: (e, t, n = !1) => {
+		let r = $t[e];
+		if (!Array.isArray(r)) throw Error(`Multi instruction not found: ${e}`);
+		return r.forEach((e) => Zt(e, t, n)), t;
+	}
+}, tn = (e, t, n = !1) => {
 	if (!e || typeof e != "object") throw Error(`Invalid instruction descriptor: expected { type, key }, got ${String(e)}`);
-	let { type: r, key: i } = e, a = Xt[r];
+	let { type: r, key: i } = e, a = en[r];
 	if (!a) throw Error(`Unsupported instruction type "${r}" for key "${i}". Expected "single" or "multi".`);
-	return a(i, t, n), t;
-}, Qt = {
+	return a(i, t, n);
+}, nn = {
 	name: "json-renderers-run-instructions",
-	version: "1.12.1"
-}, $t = (e) => {
+	version: "1.13.1"
+}, rn = (e) => {
 	typeof globalThis < "u" && e && (globalThis.ks ??= {}, globalThis.ks.jsonRenderers ??= {}, globalThis.ks.jsonRenderers.runInstructions ??= {}, globalThis.ks.jsonRenderers.runInstructions.steps = {
-		meta: Qt,
+		meta: nn,
 		runInstructions: e
 	});
-}, en = ({ instructions: e = [], base: t, data: n, showLog: r = !1 } = {}) => (e.forEach((e) => {
-	Zt(e, {
+}, an = ({ instructions: e = [], base: t, data: n, showLog: r = !1 } = {}) => (e.forEach((e) => {
+	tn(e, {
 		base: t,
 		data: n
 	}, r);
 }), t);
-$t(en);
-export { en as default, Zt as executeStep };
+rn(an);
+export { an as default, tn as executeStep };

@@ -1,21 +1,25 @@
 import columns from "../common/columns.json" with { type: "json" };
 import data from "../common/data.json" with { type: "json" };
-import "../../../docs/dist/v7/min.js";
+
+import spec from "https://keshavsoft.github.io/declarative-spec/json/v4/spec.json" with { type: "json" };
+
+import "../../../docs/dist/v13/min.js";
 
 const targetHtmlId = "dom-render-container";
 
 const start = () => {
     try {
-        const localInstructions = window.ks.declarative.definitions.data.form.simple.instructions;
-        const localBaseFromSpec = window.ks.declarative.definitions.data.form.simple.baseFromSpec;
-        const localBase = structuredClone(window.ks.declarative.spec.data[localBaseFromSpec]);
+        const localBase = structuredClone(spec?.formSimple);
 
         const result = window.ks.jsonRenderers.runInstructions.steps.runInstructions({
-            instructions: localInstructions,
+            instructions: [
+                { type: "single", key: "buildFormField" }
+            ],
             base: localBase,
             data: { columns, data },
-            showLog: false
+            showLog: true
         });
+        console.log("result : ", result);
 
         window.ks.jsonToDom.appendToDom({
             jsonSpec: result,
