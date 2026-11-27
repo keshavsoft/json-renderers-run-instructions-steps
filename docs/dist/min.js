@@ -1,38 +1,19 @@
-// node_modules/declarative-instructions-single/src/v4/index.js
+// node_modules/declarative-instructions-single/src/v5/index.js
 var e = {
-	"serial-show-serial": {
-		narration: "Prepend the serial number cell into each table body row.",
+	"options-search": {
+		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
 		destinationPath: {
-			action: "unshiftSerialToRows",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+			fileName: "base",
+			filePath: ["children"],
+			action: "unshift",
+			jsonPath: "$.base.children"
 		},
 		sourcePath: null,
-		templateKey: "buildBodyCell",
-		func: null
-	},
-	"search-show-helper": {
-		narration: "Insert the search helper text into its configured slot.",
-		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchHelper",
+		templateKey: "searchToolbar",
 		func: null,
-		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
+		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
 	},
-	"search-show-input": {
-		narration: "Insert the search input into its configured slot.",
-		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchInput",
-		func: null,
-		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
-	},
-	"search-show-label": {
+	"options-search-showLabel": {
 		narration: "Insert the search label into its configured slot.",
 		destinationPath: {
 			fileName: "base",
@@ -45,18 +26,27 @@ var e = {
 		func: null,
 		skipIf: "$..*[?@.attributes.id == 'table-title']"
 	},
-	"set-search": {
-		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
+	"options-search-showHelper": {
+		narration: "Insert the search helper text into its configured slot.",
 		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "unshift",
-			jsonPath: "$.base.children"
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
 		},
 		sourcePath: null,
-		templateKey: "searchToolbar",
+		templateKey: "searchHelper",
 		func: null,
-		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
+		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
+	},
+	"options-search-showInput": {
+		narration: "Insert the search input into its configured slot.",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchInput",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
 	},
 	buildHeaderClickable: {
 		type: "single",
@@ -4277,7 +4267,7 @@ var Ee = /* @__PURE__ */ new Set([
 	if (!i) throw Error(`Single instruction not found: ${t}`);
 	return Zt(i, n, r);
 }, $t = {
-	"set-serial": [
+	"options-serial": [
 		{
 			narration: "Prepend the serial column width to the table colgroup.",
 			destinationPath: {
@@ -4299,6 +4289,16 @@ var Ee = /* @__PURE__ */ new Set([
 			func: null
 		},
 		{
+			narration: "Prepend the serial number cell into each table body row.",
+			destinationPath: {
+				action: "unshiftSerialToRows",
+				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
+			},
+			sourcePath: null,
+			templateKey: "buildBodyCell",
+			func: null
+		},
+		{
 			narration: "Prepend the serial footer cell to the table footer row.",
 			destinationPath: {
 				action: "unshift",
@@ -4309,69 +4309,7 @@ var Ee = /* @__PURE__ */ new Set([
 			func: null
 		}
 	],
-	serial: [
-		{
-			narration: "Prepend the serial column width to the table colgroup.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
-			},
-			sourcePath: null,
-			templateKey: "colGroupForSerial",
-			func: null
-		},
-		{
-			narration: "Prepend the serial header cell to the table header row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		},
-		{
-			narration: "Prepend the serial number cell into each table body row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshiftSerialToRows",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
-			},
-			sourcePath: null,
-			templateKey: "buildBodyCell",
-			func: null
-		},
-		{
-			narration: "Prepend the serial footer cell to the table footer row.",
-			destinationPath: {
-				fileName: "base",
-				filePath: ["children"],
-				action: "unshift",
-				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
-			},
-			sourcePath: null,
-			templateKey: "headerSerialCell",
-			func: null
-		}
-	],
-	search: [{
-		narration: "Prepend the search row to top of the table.",
-		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "unshift",
-			jsonPath: "$..*[?@.attributes['data-role'] == 'table-parent']"
-		},
-		sourcePath: null,
-		templateKey: "tableSearch",
-		func: null
-	}],
-	"options-show-button": [
+	"options-options-showButton": [
 		{
 			narration: "Append the options column width to the table colgroup.",
 			destinationPath: {
@@ -4413,7 +4351,7 @@ var Ee = /* @__PURE__ */ new Set([
 			func: null
 		}
 	],
-	"options-show-edit-button": [
+	"options-options-showEditButton": [
 		{
 			narration: "Append edit column width.",
 			destinationPath: {
@@ -4455,7 +4393,7 @@ var Ee = /* @__PURE__ */ new Set([
 			func: null
 		}
 	],
-	"options-show-delete-button": [
+	"options-options-showDeleteButton": [
 		{
 			narration: "Append delete column width.",
 			destinationPath: {
@@ -4589,7 +4527,7 @@ var Ee = /* @__PURE__ */ new Set([
 	return a(i, t, n);
 }, nn = {
 	name: "json-renderers-run-instructions",
-	version: "1.13.1"
+	version: "1.14.1"
 }, rn = (e) => {
 	typeof globalThis < "u" && e && (globalThis.ks ??= {}, globalThis.ks.jsonRenderers ??= {}, globalThis.ks.jsonRenderers.runInstructions ??= {}, globalThis.ks.jsonRenderers.runInstructions.steps = {
 		meta: nn,
