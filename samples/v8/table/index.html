@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>V8 — Table Samples</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #162533 0%, #0d1723 100%);
+            color: #edf3f9;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+        }
+
+        .code-pill {
+            background: rgba(90, 169, 255, 0.15);
+            border: 1px solid rgba(90, 169, 255, 0.4);
+            color: #5aa9ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        .sample-card {
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            background: #fff;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .sample-card:hover {
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            color: inherit;
+        }
+
+        .sample-card .card-body {
+            padding: 20px 24px;
+        }
+
+        .folder-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <main class="container py-4">
+        <div class="hero-banner">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary px-3 py-2">V8 Table Samples</span>
+                <a href="../index.html" class="btn btn-sm btn-outline-light">&larr; Back</a>
+            </div>
+            <h1 class="h3 fw-bold mb-2">Table Samples using <span class="code-pill">declarative-instructions</span></h1>
+            <p class="text-light-50 small mb-0">Select a table variant to explore.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <a href="headerOnly/" class="sample-card">
+                    <div class="card-body">
+                        <div class="folder-icon">📄</div>
+                        <h5 class="fw-bold mb-1">headerOnly</h5>
+                        <p class="text-muted small mb-0">Table with header rows only.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="simple/" class="sample-card">
+                    <div class="card-body">
+                        <div class="folder-icon">📄</div>
+                        <h5 class="fw-bold mb-1">simple</h5>
+                        <p class="text-muted small mb-0">Basic table rendering sample.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="withFooter/" class="sample-card">
+                    <div class="card-body">
+                        <div class="folder-icon">📄</div>
+                        <h5 class="fw-bold mb-1">withFooter</h5>
+                        <p class="text-muted small mb-0">Table with header and footer rows.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
