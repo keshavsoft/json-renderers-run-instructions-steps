@@ -1,19 +1,38 @@
-// node_modules/declarative-instructions-single/src/v5/index.js
+// node_modules/declarative-instructions-single/src/v4/index.js
 var e = {
-	"options-search": {
-		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
+	"serial-show-serial": {
+		narration: "Prepend the serial number cell into each table body row.",
 		destinationPath: {
-			fileName: "base",
-			filePath: ["children"],
-			action: "unshift",
-			jsonPath: "$.base.children"
+			action: "unshiftSerialToRows",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
 		},
 		sourcePath: null,
-		templateKey: "searchToolbar",
-		func: null,
-		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
+		templateKey: "buildBodyCell",
+		func: null
 	},
-	"options-search-showLabel": {
+	"search-show-helper": {
+		narration: "Insert the search helper text into its configured slot.",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchHelper",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
+	},
+	"search-show-input": {
+		narration: "Insert the search input into its configured slot.",
+		destinationPath: {
+			action: "push",
+			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
+		},
+		sourcePath: null,
+		templateKey: "searchInput",
+		func: null,
+		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
+	},
+	"search-show-label": {
 		narration: "Insert the search label into its configured slot.",
 		destinationPath: {
 			fileName: "base",
@@ -26,27 +45,18 @@ var e = {
 		func: null,
 		skipIf: "$..*[?@.attributes.id == 'table-title']"
 	},
-	"options-search-showHelper": {
-		narration: "Insert the search helper text into its configured slot.",
+	"set-search": {
+		narration: "Insert the search toolbar frame before the table when a search feature is enabled.",
 		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-helper-slot'].children"
+			fileName: "base",
+			filePath: ["children"],
+			action: "unshift",
+			jsonPath: "$.base.children"
 		},
 		sourcePath: null,
-		templateKey: "searchHelper",
+		templateKey: "searchToolbar",
 		func: null,
-		skipIf: "$..*[?@.attributes.id == 'search-feedback']"
-	},
-	"options-search-showInput": {
-		narration: "Insert the search input into its configured slot.",
-		destinationPath: {
-			action: "push",
-			jsonPath: "$.base..*[?@.attributes['data-role'] == 'search-input-slot'].children"
-		},
-		sourcePath: null,
-		templateKey: "searchInput",
-		func: null,
-		skipIf: "$..*[?@.attributes.id == 'tableSearch']"
+		skipIf: "$..*[?@.attributes['data-role'] == 'search-toolbar']"
 	},
 	buildHeaderClickable: {
 		type: "single",
@@ -4321,7 +4331,7 @@ var an = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.
 		});
 	}), t;
 }, _n = {
-	"options-serial": [
+	"set-serial": [
 		{
 			narration: "Prepend the serial column width to the table colgroup.",
 			destinationPath: {
@@ -4343,16 +4353,6 @@ var an = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.
 			func: null
 		},
 		{
-			narration: "Prepend the serial number cell into each table body row.",
-			destinationPath: {
-				action: "unshiftSerialToRows",
-				jsonPath: "$.base..*[?@.attributes['data-role'] == 'table-body'].children"
-			},
-			sourcePath: null,
-			templateKey: "buildBodyCell",
-			func: null
-		},
-		{
 			narration: "Prepend the serial footer cell to the table footer row.",
 			destinationPath: {
 				action: "unshift",
@@ -4363,7 +4363,69 @@ var an = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.
 			func: null
 		}
 	],
-	"options-options-showButton": [
+	serial: [
+		{
+			narration: "Prepend the serial column width to the table colgroup.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-colgroup']"
+			},
+			sourcePath: null,
+			templateKey: "colGroupForSerial",
+			func: null
+		},
+		{
+			narration: "Prepend the serial header cell to the table header row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-header-row']"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		},
+		{
+			narration: "Prepend the serial number cell into each table body row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshiftSerialToRows",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-body']"
+			},
+			sourcePath: null,
+			templateKey: "buildBodyCell",
+			func: null
+		},
+		{
+			narration: "Prepend the serial footer cell to the table footer row.",
+			destinationPath: {
+				fileName: "base",
+				filePath: ["children"],
+				action: "unshift",
+				jsonPath: "$..*[?@.attributes['data-role'] == 'table-footer-row']"
+			},
+			sourcePath: null,
+			templateKey: "headerSerialCell",
+			func: null
+		}
+	],
+	search: [{
+		narration: "Prepend the search row to top of the table.",
+		destinationPath: {
+			fileName: "base",
+			filePath: ["children"],
+			action: "unshift",
+			jsonPath: "$..*[?@.attributes['data-role'] == 'table-parent']"
+		},
+		sourcePath: null,
+		templateKey: "tableSearch",
+		func: null
+	}],
+	"options-show-button": [
 		{
 			narration: "Append the options column width to the table colgroup.",
 			destinationPath: {
@@ -4405,7 +4467,7 @@ var an = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.
 			func: null
 		}
 	],
-	"options-options-showEditButton": [
+	"options-show-edit-button": [
 		{
 			narration: "Append edit column width.",
 			destinationPath: {
@@ -4447,7 +4509,7 @@ var an = ({ outer: e = [], outerSpec: t, getInner: n, innerSpec: r } = {}) => e.
 			func: null
 		}
 	],
-	"options-options-showDeleteButton": [
+	"options-show-delete-button": [
 		{
 			narration: "Append delete column width.",
 			destinationPath: {
